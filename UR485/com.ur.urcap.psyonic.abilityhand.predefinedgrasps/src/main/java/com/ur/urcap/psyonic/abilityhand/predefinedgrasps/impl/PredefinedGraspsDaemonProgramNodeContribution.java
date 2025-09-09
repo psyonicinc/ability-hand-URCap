@@ -1,0 +1,102 @@
+package com.ur.urcap.psyonic.abilityhand.predefinedgrasps.impl;
+
+import com.ur.urcap.api.contribution.ProgramNodeContribution;
+import com.ur.urcap.api.contribution.program.ProgramAPIProvider;
+import com.ur.urcap.api.domain.data.DataModel;
+import com.ur.urcap.api.domain.script.ScriptWriter;
+import com.ur.urcap.api.domain.userinteraction.keyboard.KeyboardInputCallback;
+// import com.ur.urcap.api.domain.userinteraction.keyboard.KeyboardInputFactory;
+import com.ur.urcap.api.domain.userinteraction.keyboard.KeyboardTextInput;
+import com.ur.urcap.api.domain.undoredo.UndoableChanges;
+
+import java.awt.Event;
+import java.awt.EventQueue;
+import java.awt.GradientPaint;
+
+import javax.swing.SwingUtilities;
+
+public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNodeContribution {
+	private static final String GRASPKEY = "selected_grasp";
+
+	private final ProgramAPIProvider apiProvider;
+	private final PredefinedGraspsDaemonProgramNodeView view;
+	private final DataModel model;
+	private final XmlRpcMyDaemonInterface daemonStatusMonitor;
+	// private final KeyboardInputFactory keyboardInputFactory;
+
+	public PredefinedGraspsDaemonProgramNodeContribution(ProgramAPIProvider apiProvider,
+										   PredefinedGraspsDaemonProgramNodeView view,
+										   DataModel model) {
+		// keyboardInputFactory = apiProvider.getUserInterfaceAPI().getUserInteraction().getKeyboardInputFactory();
+		this.apiProvider = apiProvider;
+		this.view = view;
+		this.model = model;
+		this.daemonStatusMonitor = getInstallation().getDaemonStatusMonitor();
+
+	}
+
+	@Override
+	public void openView() {
+		daemonStatusMonitor.startMonitorThread();
+		view.updateView();
+	}
+
+
+	@Override
+	public void closeView() {
+		daemonStatusMonitor.stopMonitorThread();
+	}
+
+	@Override
+	public String getTitle() {
+		return "Predefined Grasp Daemon: ";
+	}
+
+	@Override
+	public boolean isDefined() {
+		return daemonStatusMonitor.isDaemonReachable() && !getSelectedGrasp().isEmpty();
+		// return !getSelectedGrasp().isEmpty();
+	}
+
+	@Override
+	public void generateScript(ScriptWriter writer) {
+		// Interact with the daemon process through XML-RPC calls
+		// Note, alternatively plain sockets can be used.
+
+		writer.assign("graspSelection", getInstallation().getXMLRPCVariable() + ".get_grasp(\"" + getSelectedGrasp() + "\")");
+		writer.assign("graspSendFlag", getInstallation().getXMLRPCVariable() + ".send_grasp()");
+		writer.appendLine("popup(\"Grasp Sent!\", title=\"Predefined Grasp Selection\", blocking=True)");
+		writer.writeChildren();
+	}
+
+
+
+	public void onGraspSelected(final String grasp) {
+		if (model != null && grasp != null) {
+			try {
+				apiProvider.getProgramAPI().getUndoRedoManager().recordChanges(new UndoableChanges() {
+					public void executeChanges() {
+						model.set(GRASPKEY, grasp);
+					}
+				});
+			} catch (Exception e) {
+				System.err.println("Could not set grasp selection: " + e.getMessage());
+			}
+		}
+	}
+
+	public String getSelectedGrasp() {
+    try {
+        String value = model.get(GRASPKEY, "");  // "Open" is now just the default value
+        System.out.println("getSelectedGrasp() returning: '" + value + "'");
+        return value;
+    } catch (Exception e) {
+        System.err.println("Error getting selected grasp: " + e.getMessage());
+        return "";  // Return default on error
+    }
+}
+
+	private PredefinedGraspsDaemonInstallationNodeContribution getInstallation() {
+		return apiProvider.getProgramAPI().getInstallationNode(PredefinedGraspsDaemonInstallationNodeContribution.class);
+	}
+}

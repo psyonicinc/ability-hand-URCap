@@ -1,0 +1,13 @@
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/Activator.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/TorqueControlDaemonInstallationNodeContribution.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/TorqueControlDaemonInstallationNodeService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/TorqueControlDaemonInstallationNodeView.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/TorqueControlDaemonProgramNodeContribution.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/TorqueControlDaemonProgramNodeService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/TorqueControlDaemonProgramNodeView.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/TorqueControlDaemonService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/UnknownResponseException.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/V3Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/V5Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.torquecontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/torquecontrol/impl/XmlRpcMyDaemonInterface.java

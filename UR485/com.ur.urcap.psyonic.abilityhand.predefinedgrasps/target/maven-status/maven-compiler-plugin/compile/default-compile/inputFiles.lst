@@ -1,0 +1,13 @@
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/Activator.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/PredefinedGraspsDaemonInstallationNodeContribution.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/PredefinedGraspsDaemonInstallationNodeService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/PredefinedGraspsDaemonInstallationNodeView.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/PredefinedGraspsDaemonProgramNodeContribution.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/PredefinedGraspsDaemonProgramNodeService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/PredefinedGraspsDaemonProgramNodeView.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/PredefinedGraspsDaemonService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/UnknownResponseException.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/V3Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/V5Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.predefinedgrasps/src/main/java/com/ur/urcap/psyonic/abilityhand/predefinedgrasps/impl/XmlRpcMyDaemonInterface.java

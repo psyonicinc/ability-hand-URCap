@@ -1,0 +1,13 @@
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/Activator.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeContribution.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeView.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeContribution.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeView.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonService.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/UnknownResponseException.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/V3Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/V5Style.java
+/home/spgosse/sdk-1.17.0/samples/UR485/com.ur.urcap.psyonic.abilityhand.positioncontrol/src/main/java/com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/XmlRpcMyDaemonInterface.java

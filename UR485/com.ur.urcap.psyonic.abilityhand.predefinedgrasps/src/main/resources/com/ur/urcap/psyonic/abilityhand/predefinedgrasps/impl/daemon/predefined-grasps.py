@@ -46,9 +46,9 @@ def get_grasp(choice):
 def send_grasp():
     client = AHSerialClient()
     try:
-        print(byte_grip)
+        time.sleep(500/client.rate_hz)
         client.set_grip(byte_grip['choice'])
-        time.sleep(0.05)
+        time.sleep(250/client.rate_hz)
     except KeyboardInterrupt:
           pass
     finally:

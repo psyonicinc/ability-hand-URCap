@@ -46,7 +46,7 @@ public class PositionControlDaemonProgramNodeContribution implements ProgramNode
 		daemonStatusMonitor.startMonitorThread();
 
 		//UI updates from non-GUI threads must use EventQueue.invokeLater (or SwingUtilities.invokeLater)
-		updateUI();
+		// updateUI();
 	}
 
 	private void updateUI() {
@@ -90,15 +90,13 @@ public class PositionControlDaemonProgramNodeContribution implements ProgramNode
 	public void generateScript(ScriptWriter writer) {
 		// Interact with the daemon process through XML-RPC calls
 		// Note, alternatively plain sockets can be used.
-
 		writer.assign("PCdaemon_index", getInstallation().getXMLRPCVariable() + ".get_index_flex(\"" + getIndexPositionValue() + "\")");
 		writer.assign("PCdaemon_middle", getInstallation().getXMLRPCVariable() + ".get_middle_flex(\"" + getMiddlePositionValue() + "\")");
 		writer.assign("PCdaemon_ring", getInstallation().getXMLRPCVariable() + ".get_ring_flex(\"" + getRingPositionValue() + "\")");
 		writer.assign("PCdaemon_pinky", getInstallation().getXMLRPCVariable() + ".get_pinky_flex(\"" + getPinkyPositionValue() + "\")");
 		writer.assign("PCdaemon_thumb", getInstallation().getXMLRPCVariable() + ".get_thumb_flex(\"" + getThumbPositionValue() + "\")");
 		writer.assign("PCdaemon_thumbrot", getInstallation().getXMLRPCVariable() + ".get_thumb_rot(\"" + getThumbRotPositionValue() + "\")");
-		writer.assign("PCdaemon_motor_status", getInstallation().getXMLRPCVariable() + ".send_motor_positions()");
-		writer.appendLine("popup(\"Finger Positions Sent!\", title=\"Position Control\", blocking=True)");
+		writer.assign("PCdaemon_client", getInstallation().getXMLRPCVariable() + ".start_position_socket_client()");
 		writer.writeChildren();
 	}
 

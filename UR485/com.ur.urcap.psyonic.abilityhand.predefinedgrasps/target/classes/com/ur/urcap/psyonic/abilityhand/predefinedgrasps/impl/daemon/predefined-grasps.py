@@ -30,16 +30,15 @@ byte_grip_dict = {"Open": 0x00,
                   "Hang Loose": 0x10,
                   "Handshake": 0x11,
                   "Fixed Pinch": 0x12}
-byte_grip = None
+byte_grip = {"choice": None}
 
 def isReachable():
 	return True
 
 
-#NOT READY YET!!!!
 def get_grasp(choice):
     sys.stdout.write("Grasp choice:" + str(choice) + "\n")
-    byte_grip = byte_grip_dict[str(choice)]
+    byte_grip['choice'] = byte_grip_dict[str(choice)]
 
     return byte_grip
 
@@ -47,8 +46,9 @@ def get_grasp(choice):
 def send_grasp():
     client = AHSerialClient()
     try:
-        client.get_grip(byte_grip)
-        time.sleep(0.05)
+        time.sleep(500/client.rate_hz)
+        client.set_grip(byte_grip['choice'])
+        time.sleep(250/client.rate_hz)
     except KeyboardInterrupt:
           pass
     finally:

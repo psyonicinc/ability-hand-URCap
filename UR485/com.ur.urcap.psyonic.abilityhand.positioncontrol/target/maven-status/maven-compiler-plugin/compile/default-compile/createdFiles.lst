@@ -1,4 +1,5 @@
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/V5Style.class
+com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeView$2.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/Style.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeContribution$2.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeView.class
@@ -20,6 +21,7 @@ com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/UnknownResponseException.c
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeContribution$1.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeView.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeService.class
+com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonInstallationNodeView$1.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeView$4.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeContribution$1.class
 com/ur/urcap/psyonic/abilityhand/positioncontrol/impl/PositionControlDaemonProgramNodeView$6.class

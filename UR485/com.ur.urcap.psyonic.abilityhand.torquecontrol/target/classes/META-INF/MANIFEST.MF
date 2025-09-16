@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1757433325815
+Bnd-LastModified: 1757613763794
 Build-Jdk-Spec: 11
 Bundle-Activator: com.ur.urcap.psyonic.abilityhand.torquecontrol.impl.Ac
  tivator

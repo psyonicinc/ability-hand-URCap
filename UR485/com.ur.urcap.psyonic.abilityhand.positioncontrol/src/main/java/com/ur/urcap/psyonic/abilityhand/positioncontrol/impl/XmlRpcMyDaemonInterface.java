@@ -79,8 +79,8 @@ public class XmlRpcMyDaemonInterface {
 		return processString(XML_RPC_CLIENT.execute("get_title", new ArrayList<String>()));
 	}
 
-	// public void setTitle(String title) throws XmlRpcException, UnknownResponseException {
-	// 	processString(XML_RPC_CLIENT.execute("set_title", Collections.singletonList(title)));
+	// public void connectToHand(String command) throws XmlRpcException, UnknownResponseException {
+	// 	processString(XML_RPC_CLIENT.execute("connect_to_hand", Collections.singletonList(command)));
 	// }
 
 	public String getIndexFlex(String PCV) throws XmlRpcException, UnknownResponseException {
@@ -107,8 +107,8 @@ public class XmlRpcMyDaemonInterface {
 		return processString(XML_RPC_CLIENT.execute("get_thumb_rot", Collections.singletonList(PCV)));
 
 	}
-	public String sendMotorPositions() throws XmlRpcException, UnknownResponseException {
-		return processString(XML_RPC_CLIENT.execute("send_motor_positions", new Vector<Object>()));
+	public String startPositionSocketClient() throws XmlRpcException, UnknownResponseException {
+		return processString(XML_RPC_CLIENT.execute("start_position_socket_client", new Vector<Object>()));
 
 	}
 

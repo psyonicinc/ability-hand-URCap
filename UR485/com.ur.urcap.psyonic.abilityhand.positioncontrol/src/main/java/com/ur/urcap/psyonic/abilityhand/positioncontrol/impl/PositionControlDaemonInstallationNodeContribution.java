@@ -21,6 +21,7 @@ public class PositionControlDaemonInstallationNodeContribution implements Instal
 	private static final String POPUP_TITLE_KEY = "popuptitle";
 	private static final String XMLRPC_VARIABLE = "PC_daemon";
 	private static final String ENABLED_KEY = "enabled";
+	private static final String CONNECTED_KEY = "connect";
 	private static final String DEFAULT_VALUE = "DefaultValue";
 	private static final long DAEMON_TIME_OUT_NANO_SECONDS = TimeUnit.SECONDS.toNanos(20);
 	private static final long RETRY_TIME_TO_WAIT_MILLI_SECONDS = TimeUnit.SECONDS.toMillis(1);
@@ -86,45 +87,51 @@ public class PositionControlDaemonInstallationNodeContribution implements Instal
 	@Override
 	public void generateScript(ScriptWriter writer) {
 		writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"" + XmlRpcMyDaemonInterface.getDaemonUrl() + "\")");
+		// writer.appendLine(XMLRPC_VARIABLE + ".connect_to_hand(\"" + getConnectStatus() + "\")");
 		// Apply the settings to the daemon on program start in the Installation pre-amble
 		// writer.appendLine(XMLRPC_VARIABLE + ".set_title(\"" + getPopupTitle() + "\")");
 	}
 
 	private void updateUI() {
+		int connectState;
 		DaemonContribution.State state = getDaemonState();
+		if (getConnectStatus() == "connect") {
+			connectState = 1;
+		}
+		else if (getConnectStatus() == "disconnect") {
+			connectState = 0;
+		}
+		else {
+			connectState = 3;
+		}
 
-	// 	String text = "";
-	// 	switch (state) {
-	// 		case RUNNING:
-	// 			view.setStartButtonEnabled(false);
-	// 			view.setStopButtonEnabled(true);
-	// 			text = "My Daemon runs";
-	// 			break;
-	// 		case STOPPED:
-	// 			view.setStartButtonEnabled(true);
-	// 			view.setStopButtonEnabled(false);
-	// 			text = "My Daemon stopped";
-	// 			break;
-	// 		case ERROR:
-	// 		default:
-	// 			view.setStartButtonEnabled(true);
-	// 			view.setStopButtonEnabled(false);
-	// 			text = "My Daemon failed";
-	// 			break;
-	// 	}
+		switch (connectState) {
+			case 1:
+				view.setConnectButtonEnabled(false);
+				view.setDisconnectButtonEnabled(true);
+				break;
+			case 0:
+				view.setConnectButtonEnabled(true);
+				view.setDisconnectButtonEnabled(false);
+				break;
+			case 3:
+			default:
+				view.setConnectButtonEnabled(false);
+				view.setDisconnectButtonEnabled(true);
+				break;
+		}
 
-	// 	view.setStatusLabel(text);
 	}
 
-	// public void onStartClick() {
-	// 	model.set(ENABLED_KEY, true);
-	// 	applyDesiredDaemonStatus();
-	// }
+	public void onConnectClick() {
+		model.set(CONNECTED_KEY, "connect");
+		// applyDesiredDaemonStatus();
+	}
 
-	// public void onStopClick() {
-	// 	model.set(ENABLED_KEY, false);
-	// 	applyDesiredDaemonStatus();
-	// }
+	public void onDisconnectClick() {
+		model.set(CONNECTED_KEY, "disconnect");
+		// applyDesiredDaemonStatus();
+	}
 
 	private void applyDesiredDaemonStatus() {
 		new Thread(new Runnable() {
@@ -156,10 +163,6 @@ public class PositionControlDaemonInstallationNodeContribution implements Instal
 			Thread.sleep(RETRY_TIME_TO_WAIT_MILLI_SECONDS);
 		}
 	}
-
-	// public String getPopupTitle() {
-	// 	return model.get(POPUP_TITLE_KEY, DEFAULT_VALUE);
-	// }
 
 	// private void setPopupTitle(String title) {
 	// 	model.set(POPUP_TITLE_KEY, title);
@@ -197,6 +200,7 @@ public class PositionControlDaemonInstallationNodeContribution implements Instal
 		return daemonStatusMonitor.isDaemonReachable() ? daemonService.getDaemon().getState() : DaemonContribution.State.STOPPED;
 	}
 
+
 	private Boolean isDaemonEnabled() {
 		return model.get(ENABLED_KEY, true);
 	}
@@ -207,5 +211,9 @@ public class PositionControlDaemonInstallationNodeContribution implements Instal
 
 	public XmlRpcMyDaemonInterface getDaemonStatusMonitor() {
 		return daemonStatusMonitor;
+	}
+
+	private String getConnectStatus() {
+		return model.get(CONNECTED_KEY, "connect");
 	}
 }

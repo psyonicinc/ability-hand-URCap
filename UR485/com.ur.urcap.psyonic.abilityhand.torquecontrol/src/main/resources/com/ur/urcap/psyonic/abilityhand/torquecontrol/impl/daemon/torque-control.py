@@ -66,15 +66,15 @@ def send_motor_commands():
     torque = [torque_per_finger[key] for key in keys]
     client = AHSerialClient(rs_485=True)
     try:
-        time.sleep(1000/client.rate_hz)
-        thumb_move = client.hand.get_position()
-        thumb_move[-2] = 0
-        client.set_position(positions=thumb_move)
-        time.sleep(200/client.rate_hz)
-        thumb_move[-1] = 0
-        client.set_position(positions=thumb_move)
-        time.sleep(200/client.rate_hz)
-        client.set_position(positions=init)
+        # time.sleep(1000/client.rate_hz)
+        # thumb_move = client.hand.get_position()
+        # thumb_move[-2] = 0
+        # client.set_position(positions=thumb_move)
+        # time.sleep(200/client.rate_hz)
+        # thumb_move[-1] = 0
+        # client.set_position(positions=thumb_move)
+        # time.sleep(200/client.rate_hz)
+        # client.set_position(positions=init)
         time.sleep(1000/client.rate_hz)
         client.set_torque(torque)
         time.sleep(1000/client.rate_hz)

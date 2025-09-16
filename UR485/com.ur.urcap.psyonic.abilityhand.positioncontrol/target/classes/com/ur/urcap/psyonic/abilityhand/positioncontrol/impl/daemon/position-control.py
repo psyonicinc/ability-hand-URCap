@@ -9,14 +9,20 @@ import serial
 from ah_wrapper import AHSerialClient
 
 import time
-# from ah_wrapper import AHSerialClient
+import time
+import socket
+import threading
+import json
+
+HOST='127.0.0.1'
+PORT=12345
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SocketServer import ThreadingMixIn
 
 
 def isReachable():
-	return True
+    return True
 
 
 finger_positions = {
@@ -27,6 +33,7 @@ finger_positions = {
     'thumb': 'blank',
     'thumb_rot': 'blank'
 }
+
 
 def get_index_flex(PCV):
     finger_positions['index'] = float(PCV)
@@ -52,33 +59,27 @@ def get_thumb_rot(PCV):
     finger_positions['thumb_rot'] = float(PCV)
     return float(PCV)
 
-def send_motor_positions():
-    client = AHSerialClient(rs_485=True)
+def start_position_socket_client():
+    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
-        if finger_positions['thumb'] > any([finger_positions['index'], finger_positions['middle'], finger_positions['ring'], finger_positions['pinky']]):
-            time.sleep(200/client.rate_hz)
-            client.set_position(positions=[finger_positions['index'], finger_positions['middle'], finger_positions['ring'], finger_positions['pinky'], 0, 0])
-            time.sleep(200/client.rate_hz)
-            curr_pose = client.hand.get_position()
-            time.sleep(200/client.rate_hz)
-            client.set_position(positions=[finger_positions['index'], finger_positions['middle'], finger_positions['ring'], finger_positions['pinky'], finger_positions['thumb'], finger_positions['thumb_rot']])
-            time.sleep(200/client.rate_hz)
-        else:
-            time.sleep(200/client.rate_hz)
-            curr_pose = client.hand.get_position()
-            client.set_position(positions=[curr_pose[0], curr_pose[1], curr_pose[2], curr_pose[3], finger_positions['thumb'], curr_pose[5]])
-            time.sleep(200/client.rate_hz)
-            client.set_position(positions=[curr_pose[0], curr_pose[1], curr_pose[2], curr_pose[3], finger_positions['thumb'], finger_positions['thumb_rot']])
-            time.sleep(200/client.rate_hz)
-            client.set_position(positions=[finger_positions["index"],finger_positions["middle"],finger_positions["ring"],finger_positions["pinky"],finger_positions["thumb"],finger_positions["thumb_rot"]])
-            time.sleep(200/client.rate_hz)
-    except KeyboardInterrupt:
-        pass
-    finally:
-        client.close()
+        client_socket.connect((HOST, PORT))
+        print('Connected to server @', HOST)
+        message = ['P', finger_positions['index'], 
+                   finger_positions['middle'], 
+                   finger_positions['ring'], 
+                   finger_positions['pinky'], 
+                   finger_positions['thumb'], 
+                   finger_positions['thumb_rot']]
+        json_message = json.dumps(message)
+        client_socket.sendall(json_message.encode('utf-8'))
 
-    sys.stdout.write("MyDaemon daemon1 started")
-    return True
+    except socket.error as e:
+        print("Connection Refused!!", e)
+    except Exception as e:
+        print("An error has occured:", e)
+
+
+sys.stderr.write("MyDaemon daemon started")
 
 
 class MultithreadedSimpleXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):
@@ -93,5 +94,5 @@ server.register_function(get_ring_flex, "get_ring_flex")
 server.register_function(get_pinky_flex, "get_pinky_flex")
 server.register_function(get_thumb_flex, "get_thumb_flex")
 server.register_function(get_thumb_rot, "get_thumb_rot")
-server.register_function(send_motor_positions, "send_motor_positions")
+server.register_function(start_position_socket_client, "start_position_socket_client")
 server.serve_forever()

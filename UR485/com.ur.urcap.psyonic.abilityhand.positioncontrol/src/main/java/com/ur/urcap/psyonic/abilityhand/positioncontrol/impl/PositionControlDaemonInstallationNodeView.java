@@ -15,9 +15,8 @@ import java.awt.event.MouseEvent;
 public class PositionControlDaemonInstallationNodeView implements SwingInstallationNodeView<PositionControlDaemonInstallationNodeContribution> {
 
 	private final Style style;
-	// private JTextField popupInputField;
-	// private JButton startButton;
-	// private JButton stopButton;
+	private JButton connectButton;
+	private JButton disconnectButton;
 	// private JLabel statusLabel;
 
 	public PositionControlDaemonInstallationNodeView(Style style) {
@@ -34,8 +33,8 @@ public class PositionControlDaemonInstallationNodeView implements SwingInstallat
 		// panel.add(createInput(contribution));
 		// panel.add(createVerticalSpacing(style.getLargeVerticalSpacing()));
 
-		// panel.add(createStartStopButtons(contribution));
-		// panel.add(createVerticalSpacing());
+		panel.add(createConnectDisconnectButtons(contribution));
+		panel.add(createVerticalSpacing());
 
 		// panel.add(createStatusInfo());
 	}
@@ -57,6 +56,40 @@ public class PositionControlDaemonInstallationNodeView implements SwingInstallat
 		return infoBox;
 	}
 
+	private Box createConnectDisconnectButtons(final PositionControlDaemonInstallationNodeContribution contribution) {
+		Box box = Box.createHorizontalBox();
+		box.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+		connectButton = new JButton("Connect");
+		connectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				contribution.onConnectClick();
+			}
+		});
+		box.add(connectButton);
+
+		box.add(createHorizontalSpacing());
+
+		disconnectButton = new JButton("Disconnect");
+		disconnectButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				contribution.onDisconnectClick();
+			}
+		});
+		box.add(disconnectButton);
+
+		return box;
+	}
+
+	public void setConnectButtonEnabled(boolean enabled) {
+		connectButton.setEnabled(enabled);
+	}
+
+	public void setDisconnectButtonEnabled(boolean enabled) {
+		disconnectButton.setEnabled(enabled);
+	}
 
 	private Component createVerticalSpacing(int space) {
 		return Box.createRigidArea(new Dimension(0, space));
@@ -66,4 +99,7 @@ public class PositionControlDaemonInstallationNodeView implements SwingInstallat
 		return createVerticalSpacing(style.getVerticalSpacing());
 	}
 
+	private Component createHorizontalSpacing() {
+		return Box.createRigidArea(new Dimension(style.getHorizontalSpacing(), 0));
+	}
 }

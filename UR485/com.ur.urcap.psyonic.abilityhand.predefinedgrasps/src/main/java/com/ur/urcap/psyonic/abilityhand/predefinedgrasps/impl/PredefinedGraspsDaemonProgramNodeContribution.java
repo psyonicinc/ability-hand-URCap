@@ -65,7 +65,6 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 
 		writer.assign("graspSelection", getInstallation().getXMLRPCVariable() + ".get_grasp(\"" + getSelectedGrasp() + "\")");
 		writer.assign("graspSendFlag", getInstallation().getXMLRPCVariable() + ".send_grasp()");
-		writer.appendLine("popup(\"Grasp Sent!\", title=\"Predefined Grasp Selection\", blocking=True)");
 		writer.writeChildren();
 	}
 

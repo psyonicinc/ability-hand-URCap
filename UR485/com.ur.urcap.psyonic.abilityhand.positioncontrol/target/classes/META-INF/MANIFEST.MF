@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1758032571116
+Bnd-LastModified: 1758042677136
 Build-Jdk-Spec: 11
 Bundle-Activator: com.ur.urcap.psyonic.abilityhand.positioncontrol.impl.
  Activator

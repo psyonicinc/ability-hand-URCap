@@ -14,7 +14,7 @@ import threading
 import json
 
 HOST='127.0.0.1'
-PORT=12345
+PORT=60200
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SocketServer import ThreadingMixIn
@@ -31,6 +31,7 @@ server_running = True
 def connect_to_hand():
     global client
     client = AHSerialClient()
+    return "true"
 
 def send_command_to_hand(command):
     command_decoded = list(command)
@@ -103,6 +104,7 @@ def start_socket_server():
         except:
             pass
         print('Server completely shutdown!')
+        return "server closed"
 
 
 def handle_client_message(conn, addr):

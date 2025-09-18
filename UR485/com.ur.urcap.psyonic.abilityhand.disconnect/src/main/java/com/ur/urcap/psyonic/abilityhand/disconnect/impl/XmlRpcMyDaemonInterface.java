@@ -75,12 +75,8 @@ public class XmlRpcMyDaemonInterface {
 		return isDaemonReachable.get();
 	}
 
-	public String connectToHand(String writeThread, String readThread) throws XmlRpcException, UnknownResponseException {
-		return processString(XML_RPC_CLIENT.execute("connect_to_hand", new Vector<Object>())); 
-
-	}
-	public String startSocketServer() throws XmlRpcException, UnknownResponseException {
-		return processString(XML_RPC_CLIENT.execute("start_socket_server", new Vector<Object>()));
+	public String startENDSocketClient() throws XmlRpcException, UnknownResponseException {
+		return processString(XML_RPC_CLIENT.execute("start_END_socket_client", new Vector<Object>())); 
 
 	}
 

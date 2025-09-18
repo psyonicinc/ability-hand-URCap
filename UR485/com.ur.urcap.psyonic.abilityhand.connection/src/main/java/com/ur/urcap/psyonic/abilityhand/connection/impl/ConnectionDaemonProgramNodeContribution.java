@@ -73,7 +73,7 @@ public class ConnectionDaemonProgramNodeContribution implements ProgramNodeContr
 		// Interact with the daemon process through XML-RPC calls
 		// Note, alternatively plain sockets can be used.
 		writer.assign("daemon_connection", getInstallation().getXMLRPCVariable() + ".connect_to_hand()");
-		writer.assign("daemon_server", getInstallation().getXMLRPCVariable() + ".start_server_socket()");
+		writer.assign("daemon_server", getInstallation().getXMLRPCVariable() + ".start_socket_server()");
 		writer.writeChildren();
 	}
 

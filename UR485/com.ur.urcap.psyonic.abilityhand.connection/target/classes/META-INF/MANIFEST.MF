@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1758035433159
+Bnd-LastModified: 1758043023174
 Build-Jdk-Spec: 11
 Bundle-Activator: com.ur.urcap.psyonic.abilityhand.connection.impl.Activ
  ator

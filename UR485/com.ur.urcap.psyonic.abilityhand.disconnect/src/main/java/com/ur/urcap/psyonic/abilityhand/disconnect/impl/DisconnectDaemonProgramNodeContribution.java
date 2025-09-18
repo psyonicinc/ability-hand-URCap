@@ -72,7 +72,7 @@ public class DisconnectDaemonProgramNodeContribution implements ProgramNodeContr
 	public void generateScript(ScriptWriter writer) {
 		// Interact with the daemon process through XML-RPC calls
 		// Note, alternatively plain sockets can be used.
-		// writer.assign("daemon_Disconnect", getInstallation().getXMLRPCVariable() + ".connect_to_hand()");
+		writer.assign("daemon_Disconnect", getInstallation().getXMLRPCVariable() + ".start_END_socket_client");
 		// writer.assign("daemon_server", getInstallation().getXMLRPCVariable() + ".start_server_socket()");
 		writer.writeChildren();
 	}

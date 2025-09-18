@@ -262,6 +262,14 @@ sys.path.insert(0, os.getcwd())
 
 import config
 
+def get_serial_data_bytes(msg):
+    """
+    Convert each byte char to integer byte value (0-255) and returns a list
+    """
+    if msg is None:
+        return None
+    
+    return [ord(c) for c in msg]
 
 class SerialConnectionBase(object):
     """
@@ -304,6 +312,7 @@ class SerialConnectionBase(object):
         try:
             with self.rw_lock:
                 msg = self._serial.read(read_size)
+                msg = get_serial_data_bytes(msg)
             return msg
         except Exception as e:
             if config.write_log:

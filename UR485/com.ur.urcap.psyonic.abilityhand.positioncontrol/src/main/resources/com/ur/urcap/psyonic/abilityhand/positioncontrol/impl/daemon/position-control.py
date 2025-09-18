@@ -14,7 +14,7 @@ import threading
 import json
 
 HOST='127.0.0.1'
-PORT=12345
+PORT=60200
 
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SocketServer import ThreadingMixIn
@@ -76,6 +76,8 @@ def start_position_socket_client():
         print("Connection Refused!!", e)
     except Exception as e:
         print("An error has occured:", e)
+
+    return "position socket closed"
 
 
 sys.stderr.write("MyDaemon daemon started")

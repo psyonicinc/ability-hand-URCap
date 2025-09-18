@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1758039571869
+Bnd-LastModified: 1758042654166
 Build-Jdk-Spec: 11
 Bundle-Activator: com.ur.urcap.psyonic.abilityhand.disconnect.impl.Activ
  ator

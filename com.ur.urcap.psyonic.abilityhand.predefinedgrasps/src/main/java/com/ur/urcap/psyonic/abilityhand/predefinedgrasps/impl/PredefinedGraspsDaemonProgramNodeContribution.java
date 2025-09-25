@@ -30,7 +30,7 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 	private static final String GRASPKEY = "selected_grasp";
     private static final String SERVER_URL_KEY = "server_url";
     private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
-	private static final int DEFAULT_SPEED_KEY = 100;
+	private static final int DEFAULT_SPEED_KEY = 255;
 	private static final String SPEED_KEY = "speed";
 	
 	private final ProgramAPIProvider apiProvider;

@@ -16,8 +16,6 @@ import javax.swing.event.ChangeListener;
 
 public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeView<PredefinedGraspsDaemonProgramNodeContribution> {
 	
-	private static final String GRASP_PLACEHOLDER = "";
-
 	private final Style style;
 
 	private JLabel errorLabel;
@@ -85,7 +83,7 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
         box.add(new JLabel(label + ":"));
         box.add(createVerticalSpacing(10));
 
-        JSlider slider = new JSlider(0, 100, 0);
+        JSlider slider = new JSlider(0, 255, 0);
         slider.setPreferredSize(new Dimension(200, 30));
 
         JLabel valueLabel = new JLabel(String.valueOf(slider.getValue()));
@@ -118,9 +116,6 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 		PredefinedGraspsDaemonProgramNodeContribution contribution = contributionProvider.get();
 
 
-		model.addElement(GRASP_PLACEHOLDER);
-
-
 		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
 		
 		for (String grasp : grasps) {
@@ -130,12 +125,8 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 		String selected = contribution.getSelectedGrasp();
 		if (!selected.isEmpty()) {
 			model.setSelectedItem(selected);
-			
-		} else {
-			model.setSelectedItem(GRASP_PLACEHOLDER);
 		}
-
-		
+			
 
 		graspsComboBox.setModel(model);
 	}
@@ -161,7 +152,6 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 	
 	public JComboBox createComboBox(final ActionListener actionListener) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		model.addElement(GRASP_PLACEHOLDER);
 		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
 		
 		for (String grasp : grasps) {

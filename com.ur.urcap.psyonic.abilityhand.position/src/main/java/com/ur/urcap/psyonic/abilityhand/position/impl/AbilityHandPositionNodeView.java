@@ -58,7 +58,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         Box sliderBox = Box.createHorizontalBox();
         sliderBox.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JSlider slider = new JSlider(0, 100, 0);
+        JSlider slider = new JSlider(0, 120, 0);
         slider.setPreferredSize(new Dimension(150, 30));
         sliderBox.add(slider);
         sliderBox.add(createVerticalSpacing(20));

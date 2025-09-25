@@ -22,7 +22,7 @@ public class PredefinedGraspsDaemonProgramNodeService implements SwingProgramNod
 
 	@Override
 	public String getTitle(Locale locale) {
-		return "Ability Hand Predefined Grasp Selection Daemon";
+		return "Ability Hand Grip Command";
 	}
 
 	@Override

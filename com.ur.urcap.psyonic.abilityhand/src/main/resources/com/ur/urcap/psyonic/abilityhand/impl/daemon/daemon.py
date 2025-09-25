@@ -22,6 +22,28 @@ class Daemon:
 		# AH Wrapper client
 		self.client = None
 
+		# grip dictionary
+		self.byte_grip_dict = {
+				  "Open": 0x00, 
+                  "Power": 0x01,
+                  "Key": 0x02,
+                  "Pinch": 0x03,
+                  "Tripod Opened": 0x04,
+                  "Sign of the Horns": 0x05,
+                  "Cylinder": 0x06,
+                  "Mouse Grasp": 0x07,
+                  "Power/Key Switch": 0x08,
+                  "Point": 0x09,
+                  "Rude...": 0x0A,
+                  "Hook": 0x0B,
+                  "Relax": 0x0C,
+                  "Sleeve": 0x0D,
+                  "Peace": 0x0E,
+                  "Tripod Closed": 0x0F,
+                  "Hang Loose": 0x10,
+                  "Handshake": 0x11,
+                  "Fixed Pinch": 0x12}
+		
 		# Socket variables
 		self.in_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 		self.in_sock.settimeout(3)
@@ -68,30 +90,9 @@ class Daemon:
 
 	def set_grip(self, raw_grip, speed=100):
 		speed = int(speed)
-		byte_grip_dict = {"Open": 0x00, 
-                  "Power": 0x01,
-                  "Key": 0x02,
-                  "Pinch": 0x03,
-                  "Tripod Opened": 0x04,
-                  "Sign of the Horns": 0x05,
-                  "Cylinder": 0x06,
-                  "Mouse Grasp": 0x07,
-                  "Power/Key Switch": 0x08,
-                  "Point": 0x09,
-                  "Rude...": 0x0A,
-                  "Hook": 0x0B,
-                  "Relax": 0x0C,
-                  "Sleeve": 0x0D,
-                  "Peace": 0x0E,
-                  "Tripod Closed": 0x0F,
-                  "Hang Loose": 0x10,
-                  "Handshake": 0x11,
-                  "Fixed Pinch": 0x12}
 		if self.client:
 			try:
-				time.sleep(250/self.client.rate_hz)
-				self.client.set_grip(byte_grip_dict[str(raw_grip.capitalize())], speed)
-				time.sleep(250/self.client.rate_hz)
+				self.client.set_grip(self.byte_grip_dict[str(raw_grip.capitalize())], speed)
 			except KeyError:
 				sys.stdout.write("Invalid Key!!")
 				pass

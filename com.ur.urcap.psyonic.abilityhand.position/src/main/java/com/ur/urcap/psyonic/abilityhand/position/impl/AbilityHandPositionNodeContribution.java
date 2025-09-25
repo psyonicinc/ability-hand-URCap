@@ -75,7 +75,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
     @Override
     public String getTitle() {
-        return "Ability Hand Position Control";
+        return "Ability Hand Position Command";
     }
 
     @Override

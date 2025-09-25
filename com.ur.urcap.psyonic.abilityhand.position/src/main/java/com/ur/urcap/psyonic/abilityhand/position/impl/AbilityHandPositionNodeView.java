@@ -50,17 +50,24 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
     }
 
     private Box createSliderBox(String label, final ContributionProvider<AbilityHandPositionNodeContribution> provider) {
-        Box box = Box.createHorizontalBox();
-        box.setAlignmentX(Component.LEFT_ALIGNMENT);
-        box.add(new JLabel(label + ":"));
-        box.add(createVerticalSpacing(10));
+        Box verticalBox = Box.createVerticalBox();
+        verticalBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        verticalBox.add(new JLabel(label + ":"));
+        verticalBox.add(createVerticalSpacing(5));
+
+        Box sliderBox = Box.createHorizontalBox();
+        sliderBox.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JSlider slider = new JSlider(0, 100, 0);
-        slider.setPreferredSize(new Dimension(200, 30));
+        slider.setPreferredSize(new Dimension(150, 30));
+        sliderBox.add(slider);
+        sliderBox.add(createVerticalSpacing(20));
 
         JLabel valueLabel = new JLabel(String.valueOf(slider.getValue()));
         valueLabel.setPreferredSize(new Dimension(40, 30));
-        box.add(valueLabel);
+        sliderBox.add(valueLabel);
+
+        verticalBox.add(sliderBox);
 
         slider.addChangeListener(new ChangeListener() {
             @Override
@@ -87,8 +94,8 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
                 break;
         }
 
-        box.add(slider);
-        return box;
+        // box.add(slider);
+        return verticalBox;
     }
 
     public void updateSliders(int index, int middle, int ring, int pinky, int thumbFlexor, int thumbOpposition) {

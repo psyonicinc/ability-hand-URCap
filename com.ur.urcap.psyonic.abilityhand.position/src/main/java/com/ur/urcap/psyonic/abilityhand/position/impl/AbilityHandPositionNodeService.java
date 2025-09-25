@@ -24,7 +24,7 @@ public class AbilityHandPositionNodeService implements SwingProgramNodeService<A
 
 	@Override
 	public String getTitle(Locale locale) {
-		return "Ability Hand Position Control";
+		return "Ability Hand Position Command";
 	}
 
 	@Override

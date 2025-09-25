@@ -37,13 +37,15 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 	public void buildUI(JPanel panel, final ContributionProvider<PredefinedGraspsDaemonProgramNodeContribution> provider) {
 		this.contributionProvider = provider;
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		panel.add(new JLabel("Select the desired grasp"), Component.LEFT_ALIGNMENT);
+		panel.add(new JLabel("Select the desired grip"), Component.LEFT_ALIGNMENT);
 		panel.add(createVerticalSpacing());
 		panel.add(createGraspSelectionSection());
 
 		panel.add(createVerticalSpacing());
 
 		panel.add(createSliderBox("SPEED", provider));
+		panel.add(new JLabel("(set SPEED to 0 to stop grip)"), Component.LEFT_ALIGNMENT);
+
 
 		errorLabel = new JLabel();
 		errorLabel.setForeground(java.awt.Color.RED);

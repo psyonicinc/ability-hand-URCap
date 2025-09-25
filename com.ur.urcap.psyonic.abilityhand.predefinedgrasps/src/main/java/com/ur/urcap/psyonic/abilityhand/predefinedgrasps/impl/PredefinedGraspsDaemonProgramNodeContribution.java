@@ -80,7 +80,7 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 
 	@Override
 	public String getTitle() {
-		return "Predefined Grasp Daemon: ";
+		return "ABH Grip Command: ";
 	}
 
 	@Override
@@ -129,8 +129,7 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 
 	public String getSelectedGrasp() {
     try {
-        String value = model.get(GRASPKEY, "");  // "Open" is now just the default value
-        System.out.println("getSelectedGrasp() returning: '" + value + "'");
+        String value = model.get(GRASPKEY, "Open");  // "Open" is now just the default value
         return value;
     } catch (Exception e) {
         System.err.println("Error getting selected grasp: " + e.getMessage());

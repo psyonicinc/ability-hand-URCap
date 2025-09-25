@@ -25,6 +25,18 @@
 # Settings
 *.settings
 
+# PyCharm
+*.idea
+
+# Python Wrapper cleanup
+*config.py
+*__pycache__/
+*ability_hand.log
+
+# Target folers
+
+*target/
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 replay_pid*

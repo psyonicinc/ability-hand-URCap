@@ -5,7 +5,6 @@ import os
 from SimpleXMLRPCServer import SimpleXMLRPCServer
 from SocketServer import ThreadingMixIn
 import socket
-import time
 
 # Import local packages
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "lib"))
@@ -98,12 +97,6 @@ class Daemon:
 				pass
 			finally:
 				return True
-			
-	def set_torque(self, torques):
-		positions = [float(p) for p in positions]
-		self.client.set_torque(torques)
-
-
 
 
 class MultithreadedSimpleXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):

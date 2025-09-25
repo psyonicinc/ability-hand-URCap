@@ -100,7 +100,7 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 	}
 
 
-	public void updatePosition(final String key, final int value) {
+	public void updatePosition(String key, int value) {
     	
     	undoRedoManager.recordChanges(new UndoableChanges() {
 			

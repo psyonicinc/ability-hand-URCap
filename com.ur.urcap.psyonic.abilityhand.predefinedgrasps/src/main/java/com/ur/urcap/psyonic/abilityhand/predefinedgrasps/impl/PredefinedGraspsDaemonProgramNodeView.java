@@ -77,16 +77,16 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 		return section;
 	}
 
-	private Box createSliderBox(final String label, final ContributionProvider<PredefinedGraspsDaemonProgramNodeContribution> provider) {
+	private Box createSliderBox(String label, final ContributionProvider<PredefinedGraspsDaemonProgramNodeContribution> provider) {
         Box box = Box.createHorizontalBox();
         box.setAlignmentX(Component.LEFT_ALIGNMENT);
         box.add(new JLabel(label + ":"));
         box.add(createVerticalSpacing(10));
 
-        final JSlider slider = new JSlider(0, 100, 0);
+        JSlider slider = new JSlider(0, 100, 0);
         slider.setPreferredSize(new Dimension(200, 30));
 
-        final JLabel valueLabel = new JLabel(String.valueOf(slider.getValue()));
+        JLabel valueLabel = new JLabel(String.valueOf(slider.getValue()));
         valueLabel.setPreferredSize(new Dimension(40, 30));
         box.add(valueLabel);
 

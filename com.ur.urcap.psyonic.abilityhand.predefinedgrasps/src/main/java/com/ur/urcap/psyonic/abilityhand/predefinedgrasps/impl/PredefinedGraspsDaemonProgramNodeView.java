@@ -83,7 +83,7 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
         box.add(new JLabel(label + ":"));
         box.add(createVerticalSpacing(10));
 
-        JSlider slider = new JSlider(0, 100, 0);
+        JSlider slider = new JSlider(0, 255, 0);
         slider.setPreferredSize(new Dimension(200, 30));
 
         JLabel valueLabel = new JLabel(String.valueOf(slider.getValue()));

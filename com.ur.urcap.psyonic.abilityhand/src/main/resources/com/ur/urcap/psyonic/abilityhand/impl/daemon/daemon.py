@@ -33,6 +33,7 @@ class Daemon:
 		self.server.register_function(self.connect, "connect")
 		self.server.register_function(self.disconnect, "disconnect")
 		self.server.register_function(self.set_position, "set_position")
+		self.server.register_function(self.set_grip, "set_grip")
 
 	def main(self):
 		self.server.serve_forever()
@@ -60,11 +61,13 @@ class Daemon:
 
 	def set_position(self, positions):
 		if self.client:
+			positions = [float(p) for p in positions]
 			positions[-1] = positions[-1] * -1
 			self.client.set_position(positions)
 		return True
 
-	def set_grip(self, raw_grip):
+	def set_grip(self, raw_grip, speed=100):
+		speed = int(speed)
 		byte_grip_dict = {"Open": 0x00, 
                   "Power": 0x01,
                   "Key": 0x02,
@@ -86,14 +89,19 @@ class Daemon:
                   "Fixed Pinch": 0x12}
 		if self.client:
 			try:
-				time.sleep(500/self.client.rate_hz)
-				self.client.set_grip(byte_grip_dict[str(raw_grip.capitalize())])
+				time.sleep(250/self.client.rate_hz)
+				self.client.set_grip(byte_grip_dict[str(raw_grip.capitalize())], speed)
 				time.sleep(250/self.client.rate_hz)
 			except KeyError:
 				sys.stdout.write("Invalid Key!!")
 				pass
 			finally:
 				return True
+			
+	def set_torque(self, torques):
+		positions = [float(p) for p in positions]
+		self.client.set_torque(torques)
+
 
 
 

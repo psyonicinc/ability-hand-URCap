@@ -116,9 +116,6 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 		PredefinedGraspsDaemonProgramNodeContribution contribution = contributionProvider.get();
 
 
-		model.addElement(GRASP_PLACEHOLDER);
-
-
 		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
 		
 		for (String grasp : grasps) {
@@ -128,12 +125,8 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 		String selected = contribution.getSelectedGrasp();
 		if (!selected.isEmpty()) {
 			model.setSelectedItem(selected);
-			
-		} else {
-			model.setSelectedItem(GRASP_PLACEHOLDER);
 		}
-
-		
+			
 
 		graspsComboBox.setModel(model);
 	}

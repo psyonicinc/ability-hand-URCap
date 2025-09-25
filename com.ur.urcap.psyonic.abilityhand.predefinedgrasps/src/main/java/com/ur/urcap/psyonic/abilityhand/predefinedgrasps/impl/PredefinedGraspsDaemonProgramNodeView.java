@@ -16,8 +16,6 @@ import javax.swing.event.ChangeListener;
 
 public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeView<PredefinedGraspsDaemonProgramNodeContribution> {
 	
-	private static final String GRASP_PLACEHOLDER = "";
-
 	private final Style style;
 
 	private JLabel errorLabel;
@@ -161,7 +159,6 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 	
 	public JComboBox createComboBox(final ActionListener actionListener) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		model.addElement(GRASP_PLACEHOLDER);
 		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
 		
 		for (String grasp : grasps) {

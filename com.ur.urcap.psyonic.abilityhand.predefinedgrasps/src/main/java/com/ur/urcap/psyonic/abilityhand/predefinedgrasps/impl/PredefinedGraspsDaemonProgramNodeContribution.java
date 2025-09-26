@@ -28,6 +28,7 @@ import javax.swing.SwingUtilities;
 
 public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNodeContribution {
 	private static final String GRASPKEY = "selected_grasp";
+	private static final String GRASP_INDEX_KEY = "0";
     private static final String SERVER_URL_KEY = "server_url";
     private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
 	private static final int DEFAULT_SPEED_KEY = 100;
@@ -80,7 +81,7 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 
 	@Override
 	public String getTitle() {
-		return "ABH Grip Command: ";
+		return "Grip: \"" + getSelectedGrasp() + "\"   Speed: \"" + getSpeed() + "\"";
 	}
 
 	@Override
@@ -95,7 +96,7 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 
         String xmlRpcVar = "ability_hand_rpc";
         writer.assign(xmlRpcVar, "rpc_factory(\"xmlrpc\", \"" + getServerUrl() + "\")");
-        writer.appendLine(xmlRpcVar + ".set_grip(\"" + getSelectedGrasp() + "\", \"" + getSpeed() + "\")");
+        writer.appendLine(xmlRpcVar + ".set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
 
 	}
 
@@ -113,12 +114,13 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
     }
 
 
-	public void onGraspSelected(final String grasp) {
+	public void onGraspSelected(final String grasp, final int grasp_index) {
 		if (model != null && grasp != null) {
 			try {
 				apiProvider.getProgramAPI().getUndoRedoManager().recordChanges(new UndoableChanges() {
 					public void executeChanges() {
 						model.set(GRASPKEY, grasp);
+						model.set(GRASP_INDEX_KEY, Integer.toString(grasp_index));
 					}
 				});
 			} catch (Exception e) {
@@ -133,7 +135,17 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
         return value;
     } catch (Exception e) {
         System.err.println("Error getting selected grasp: " + e.getMessage());
-        return "";  // Return default on error
+        return "Open";  // Return default on error
+    }
+}
+
+	public int getSelectedGraspIndex() {
+    try {
+        String value = model.get(GRASP_INDEX_KEY, "0");  // "Open" or 1 is now just the default value
+        return Integer.parseInt(value);
+    } catch (Exception e) {
+        System.err.println("Error getting selected grasp: " + e.getMessage());
+        return 0;  // Return default on error
     }
 }
 

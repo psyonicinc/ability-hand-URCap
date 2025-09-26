@@ -56,6 +56,15 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 		updateGraspCombobox();
 	}
 
+	private int getGripIndex(String[] grips, String selectedGrasp) {
+		for (int i = 0; i < grips.length; i++) {
+			if (grips[i].equals(selectedGrasp)) {
+				return i;
+			}
+		}
+		return 0; //return Open if fails
+	}
+
 	private Box createGraspSelectionSection() {
 		Box section = Box.createHorizontalBox();
 		section.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -64,10 +73,11 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JComboBox comboBox = (JComboBox) e.getSource();
-
+				int index;
 				String selectedGrasp = (String) comboBox.getSelectedItem();
-
-				contributionProvider.get().onGraspSelected(selectedGrasp);
+				String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
+				index = getGripIndex(grasps, selectedGrasp);
+				contributionProvider.get().onGraspSelected(selectedGrasp, index);
 
 				updateGraspCombobox();
 			}

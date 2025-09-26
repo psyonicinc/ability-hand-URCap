@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1758910719395
+Bnd-LastModified: 1758912532686
 Build-Jdk-Spec: 11
 Bundle-Activator: com.ur.urcap.psyonic.abilityhand.predefinedgrasps.impl
  .Activator

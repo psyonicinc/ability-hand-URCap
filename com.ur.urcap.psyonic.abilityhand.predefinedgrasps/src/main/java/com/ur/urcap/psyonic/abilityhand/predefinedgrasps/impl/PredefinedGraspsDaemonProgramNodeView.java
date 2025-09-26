@@ -75,7 +75,7 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 				JComboBox comboBox = (JComboBox) e.getSource();
 				int index;
 				String selectedGrasp = (String) comboBox.getSelectedItem();
-				String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
+				String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch", "User Grip 7", "User Grip 8", "User Grip 9", "User Grip 10", "User Grip 11", "Trigger Grip", "User Grip 12", "User Grip 13", "User Grip 14", "User Grip 15", "User Grip 16", "User Grip 17", "User Grip 18", "Finger Wave"};
 				index = getGripIndex(grasps, selectedGrasp);
 				contributionProvider.get().onGraspSelected(selectedGrasp, index);
 
@@ -130,8 +130,7 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 
 		model.addElement(GRASP_PLACEHOLDER);
 
-
-		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
+		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch", "User Grip 7", "User Grip 8", "User Grip 9", "User Grip 10", "User Grip 11", "Trigger Grip", "User Grip 12", "User Grip 13", "User Grip 14", "User Grip 15", "User Grip 16", "User Grip 17", "User Grip 18", "Finger Wave"};
 		
 		for (String grasp : grasps) {
 			model.addElement(grasp);
@@ -172,7 +171,7 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 	public JComboBox createComboBox(final ActionListener actionListener) {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
 		model.addElement(GRASP_PLACEHOLDER);
-		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch"};
+		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch", "User Grip 7", "User Grip 8", "User Grip 9", "User Grip 10", "User Grip 11", "Trigger Grip", "User Grip 12", "User Grip 13", "User Grip 14", "User Grip 15", "User Grip 16", "User Grip 17", "User Grip 18", "Finger Wave"};
 		
 		for (String grasp : grasps) {
 			model.addElement(grasp);

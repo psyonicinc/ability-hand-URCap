@@ -42,7 +42,12 @@ public class MyDaemonProgramNodeContribution implements ProgramNodeContribution 
 
 	@Override
 	public String getTitle() {
-		return "Ability Hand - Baud: ";
+		if (getBaud().equals(0)) {
+			return "Ability Hand - Baud: auto";
+		}
+		else {
+			return "Ability Hand - Baud: \"" + getBaud() + "\"";
+		}
 	}
 
 	@Override

@@ -33,6 +33,7 @@ class Daemon:
 		self.server.register_function(self.disconnect, "disconnect")
 		self.server.register_function(self.set_position, "set_position")
 		self.server.register_function(self.set_grip, "set_grip")
+		self.server.register_function(self.set_duty, "set_duty")
 
 	def main(self):
 		self.server.serve_forever()
@@ -75,6 +76,13 @@ class Daemon:
 				pass
 			finally:
 				return True
+			
+	def set_duty(self, duties):
+		if self.client:
+			duties = [float(d) for d in duties]
+			duties[-1] = duties[-1] * -1
+			self.client.set_duty(duties)
+		return True
 
 
 class MultithreadedSimpleXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):

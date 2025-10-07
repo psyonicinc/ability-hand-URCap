@@ -33,6 +33,7 @@ class Daemon:
 		self.server.register_function(self.disconnect, "disconnect")
 		self.server.register_function(self.set_position, "set_position")
 		self.server.register_function(self.set_grip, "set_grip")
+		self.server.register_function(self.set_torque, "set_torque")
 
 	def main(self):
 		self.server.serve_forever()
@@ -75,6 +76,13 @@ class Daemon:
 				pass
 			finally:
 				return True
+
+	def set_torque(self, torques):
+		if self.client:
+			torques = [float(t)/100 for  t in torques]
+			torques[-1] = torques[-1] * -1
+			self.client.set_torque(torques)
+		return True
 
 
 class MultithreadedSimpleXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):

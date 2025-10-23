@@ -48,6 +48,7 @@ class Daemon:
 		except Exception as e:
 			sys.stdout.write(str(e))
 			sys.stdout.write("main fail\n")
+			self.client.close()
 
 
 	def connect(self, baud, simulated):
@@ -92,6 +93,7 @@ class Daemon:
 			except Exception as e:
 				sys.stderr.write("position error\n")
 				sys.stdout.write(str(e))
+				self.client.close()
 			finally:
 				return True
 		return False
@@ -104,6 +106,7 @@ class Daemon:
 			except Exception as e:
 				sys.stderr.write("grip error\n")
 				sys.stdout.write(str(e))
+				self.client.close()
 			finally:
 				return True
 		return False

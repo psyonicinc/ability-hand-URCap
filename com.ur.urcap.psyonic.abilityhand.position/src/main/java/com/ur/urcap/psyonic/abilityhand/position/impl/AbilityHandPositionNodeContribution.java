@@ -86,9 +86,11 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
     @Override
     public void generateScript(ScriptWriter writer) {
-        String xmlRpcVar = "ability_hand_rpc";
-        writer.assign(xmlRpcVar, "rpc_factory(\"xmlrpc\", \"" + getServerUrl() + "\")");
+        // String xmlRpcVar = "ability_hand_rpc";
+        // writer.assign(xmlRpcVar, "rpc_factory(\"xmlrpc\", \"" + getServerUrl() + "\")");
+        String xmlRpcVar = "ah_daemon";
         writer.appendLine(xmlRpcVar + ".set_position([\"" + getPosition(INDEX_KEY) + "\",\"" + getPosition(MIDDLE_KEY) + "\", \"" + getPosition(RING_KEY) + "\", \"" + getPosition(PINKY_KEY) + "\",\"" + getPosition(THUMB_FLEXOR_KEY) + "\",\"" + getPosition(THUMB_OPPOSITION_KEY) + "\"])");
+        // writer.appendLine("daemon.set_position([\"" + getPosition(INDEX_KEY) + "\",\"" + getPosition(MIDDLE_KEY) + "\", \"" + getPosition(RING_KEY) + "\", \"" + getPosition(PINKY_KEY) + "\",\"" + getPosition(THUMB_FLEXOR_KEY) + "\",\"" + getPosition(THUMB_OPPOSITION_KEY) + "\"])");
 
     }
 

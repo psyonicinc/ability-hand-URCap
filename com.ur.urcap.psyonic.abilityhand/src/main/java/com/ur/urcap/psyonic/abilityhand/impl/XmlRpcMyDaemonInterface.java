@@ -3,6 +3,7 @@ package com.ur.urcap.psyonic.abilityhand.impl;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,13 +16,17 @@ public class XmlRpcMyDaemonInterface {
 	public XmlRpcMyDaemonInterface(String host, int port) {
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 		config.setEnabledForExtensions(true);
+
 		try {
 			config.setServerURL(new URL("http://" + host + ":" + port + "/RPC2"));
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 		config.setConnectionTimeout(1000); //1s
+		config.setReplyTimeout(2000); //2s
 		client = new XmlRpcClient();
+
+		client.setTransportFactory(new XmlRpcCommonsTransportFactory(client));
 		client.setConfig(config);
 	}
 

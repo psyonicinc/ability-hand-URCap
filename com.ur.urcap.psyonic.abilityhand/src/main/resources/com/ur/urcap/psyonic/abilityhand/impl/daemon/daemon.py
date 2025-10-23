@@ -22,20 +22,34 @@ class Daemon:
 		self.client = None
 		
 		# Socket variables
-		self.in_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-		self.in_sock.settimeout(3)
-		self.server = MultithreadedSimpleXMLRPCServer((SOCKET_IP, XMLRPC_PORT), allow_none=True)
-		self.server.RequestHandlerClass.protocol_version = "HTTP/1.1"
-		self.running = True
+		try:
+			self.in_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+			self.in_sock.settimeout(3)
+			self.server = MultithreadedSimpleXMLRPCServer((SOCKET_IP, XMLRPC_PORT), allow_none=True)
+			# self.server.socket.settimeout(3)
+			self.server.RequestHandlerClass.protocol_version = "HTTP/1.1"
+			self.running = True
 
-		# Register XMLRPC functions
-		self.server.register_function(self.connect, "connect")
-		self.server.register_function(self.disconnect, "disconnect")
-		self.server.register_function(self.set_position, "set_position")
-		self.server.register_function(self.set_grip, "set_grip")
-
+			# Register XMLRPC functions
+			self.server.register_function(self.connect, "connect")
+			self.server.register_function(self.disconnect, "disconnect")
+			self.server.register_function(self.set_position, "set_position")
+			self.server.register_function(self.set_grip, "set_grip")
+		except Exception as e:
+			sys.stdout.write(str(e))
+			sys.stdout.write("daemon init fail\n")
+			print(e)
+			print("daemon init fail\n")
+			raise
+		
 	def main(self):
-		self.server.serve_forever()
+		try:
+			sys.stdout.write("Starting Ability Hand Serve Forever\n")
+			self.server.serve_forever()
+		except Exception as e:
+			sys.stdout.write(str(e))
+			sys.stdout.write("main fail\n")
+
 
 	def connect(self, baud, simulated):
 
@@ -43,42 +57,62 @@ class Daemon:
 			# Simulated hand has basic position functionaly for setting and getting
 			self.client = AHSerialClient(simulated=True)
 			return True
-		
-		if baud:
-			self.client = AHSerialClient(baud_rate=baud)
-		else:
-			self.client = AHSerialClient()
+		try:
+			if baud:
+				self.client = AHSerialClient(baud_rate=baud)
+			else:
+				self.client = AHSerialClient()
+		except Exception as e:
+			sys.stderr.write("AH connection error\n")
+			sys.stdout.write(str(e))
+			return False
+		finally:
+			# Program will exit if hand does not connect
+			return True
 
-		# Program will exit if hand does not connect
-		return True
+		
 
 
 	def disconnect(self):
 		if self.client:
-			self.client.close()
-		return True
+			try:
+				self.client.close()
+			except Exception as e:
+				sys.stderr.write("disconnect error\n")
+				sys.stderr.write(str(e))
+			finally:
+				return True
 
 	def set_position(self, positions):
 		if self.client:
-			positions = [float(p) for p in positions]
-			positions[-1] = positions[-1] * -1
-			self.client.set_position(positions)
-		return True
+			try:
+				positions = [float(p) for p in positions]
+				positions[-1] = positions[-1] * -1
+				self.client.set_position(positions)
+			except Exception as e:
+				sys.stderr.write("position error\n")
+				sys.stdout.write(str(e))
+			finally:
+				return True
+		return False
 
 	def set_grip(self, raw_grip, speed=255):
 		speed = int(speed)
 		if self.client:
 			try:
 				self.client.set_grip(raw_grip, speed)
-			except KeyError:
-				sys.stdout.write("Invalid Key!!")
-				pass
+			except Exception as e:
+				sys.stderr.write("grip error\n")
+				sys.stdout.write(str(e))
 			finally:
 				return True
+		return False
 
 
 class MultithreadedSimpleXMLRPCServer(ThreadingMixIn, SimpleXMLRPCServer):
-	pass
+	daemon_threads = True
+	allow_reuse_address = True
+	request_queue_size = 10
 
 
 if __name__ == "__main__":

@@ -93,9 +93,6 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 	public void generateScript(ScriptWriter writer) {
 		// Interact with the daemon process through XML-RPC calls
 		// Note, alternatively plain sockets can be used.
-
-        // String xmlRpcVar = "ability_hand_rpc";
-        // writer.assign(xmlRpcVar, "rpc_factory(\"xmlrpc\", \"" + getServerUrl() + "\")");
 		String xmlRpcVar = "ah_daemon";
         writer.appendLine(xmlRpcVar + ".set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
 

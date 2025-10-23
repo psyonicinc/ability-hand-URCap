@@ -26,7 +26,6 @@ class Daemon:
 			self.in_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 			self.in_sock.settimeout(3)
 			self.server = MultithreadedSimpleXMLRPCServer((SOCKET_IP, XMLRPC_PORT), allow_none=True)
-			# self.server.socket.settimeout(3)
 			self.server.RequestHandlerClass.protocol_version = "HTTP/1.1"
 			self.running = True
 
@@ -53,11 +52,11 @@ class Daemon:
 
 	def connect(self, baud, simulated):
 
-		if bool(simulated):
-			# Simulated hand has basic position functionaly for setting and getting
-			self.client = AHSerialClient(simulated=True)
-			return True
 		try:
+			if bool(simulated):
+			# Simulated hand has basic position functionaly for setting and getting
+				self.client = AHSerialClient(simulated=True)
+				return True
 			if baud:
 				self.client = AHSerialClient(baud_rate=baud)
 			else:
@@ -82,6 +81,7 @@ class Daemon:
 				sys.stderr.write(str(e))
 			finally:
 				return True
+		return False
 
 	def set_position(self, positions):
 		if self.client:

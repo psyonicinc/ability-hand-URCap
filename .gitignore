@@ -32,6 +32,7 @@
 *config.py
 *__pycache__/
 *ability_hand.log
+*.pyc
 
 # Target folers
 *target/

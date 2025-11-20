@@ -52,17 +52,19 @@ public class MyDaemonProgramNodeContribution implements ProgramNodeContribution 
 
 	@Override
 	public void generateScript(ScriptWriter writer) {
+		
 		// Assign XMLRPC Variable
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-    	// writer.appendLine("daemon = rpc_factory(\"xmlrpc\", \"" + getServerUrl() + "\")");
+
+		// Make Sure Hand is Disconnected to Avoid Mulitple Client Connections
+		writer.appendLine("result = ah_daemon.disconnect()");
+
+		// Check If Simulated Hand
 		String urBool = getSimulated() ? "True" : "False";
+
+		// Connect to Hand Client
     	writer.appendLine("result = ah_daemon.connect(" + getBaud() + "," + urBool + ")");
-		
-		// Connect to Hand
-		// String urBool = getSimulated() ? "True" : "False";
-		// writer.appendLine("result = daemon.connect("+getBaud()+","+urBool+")");
-		
 		
 		// Execute Children Nodes
 		writer.writeChildren();

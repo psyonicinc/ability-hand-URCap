@@ -13,6 +13,10 @@ public class Activator implements BundleActivator {
 		MyDaemonInstallationNodeService installationNodeService = new MyDaemonInstallationNodeService(daemonService);
 
 		context.registerService(SwingInstallationNodeService.class, installationNodeService, null);
+
+		context.registerService(SwingProgramNodeService.class, new AbilityHandPositionNodeService(), null);
+		context.registerService(SwingProgramNodeService.class, new PredefinedGraspsDaemonProgramNodeService(), null);
+
 		context.registerService(SwingProgramNodeService.class, new MyDaemonProgramNodeService(), null);
 		context.registerService(DaemonService.class, daemonService, null);
 	}

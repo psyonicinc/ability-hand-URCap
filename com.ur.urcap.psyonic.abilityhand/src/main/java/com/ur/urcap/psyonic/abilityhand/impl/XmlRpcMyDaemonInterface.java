@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class XmlRpcMyDaemonInterface {
 
-	private final XmlRpcClient client;
+	private static final XmlRpcClient client = new XmlRpcClient();
 
 	public XmlRpcMyDaemonInterface(String host, int port) {
 		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
@@ -22,11 +22,9 @@ public class XmlRpcMyDaemonInterface {
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		config.setConnectionTimeout(1000); //1s
-		config.setReplyTimeout(2000); //2s
-		client = new XmlRpcClient();
+		config.setConnectionTimeout(10000); //10s
+		config.setReplyTimeout(10000); //10s ... used to be 60s
 
-		client.setTransportFactory(new XmlRpcCommonsTransportFactory(client));
 		client.setConfig(config);
 	}
 

@@ -10,14 +10,14 @@ import com.ur.urcap.api.domain.data.DataModel;
 
 import java.util.Locale;
 
-public class PredefinedGraspsDaemonProgramNodeService implements SwingProgramNodeService<PredefinedGraspsDaemonProgramNodeContribution, PredefinedGraspsDaemonProgramNodeView> {
+public class AbilityHandGripProgramNodeService implements SwingProgramNodeService<AbilityHandGripProgramNodeContribution, AbilityHandGripProgramNodeView> {
 
-	public PredefinedGraspsDaemonProgramNodeService() {
+	public AbilityHandGripProgramNodeService() {
 	}
 
 	@Override
 	public String getId() {
-		return "PredefinedGraspsDaemonSwingNode";
+		return "AbilityHandGripSwingNode";
 	}
 
 	@Override
@@ -31,15 +31,15 @@ public class PredefinedGraspsDaemonProgramNodeService implements SwingProgramNod
 	}
 
 	@Override
-	public PredefinedGraspsDaemonProgramNodeView createView(ViewAPIProvider apiProvider) {
+	public AbilityHandGripProgramNodeView createView(ViewAPIProvider apiProvider) {
 		SystemAPI systemAPI = apiProvider.getSystemAPI();
 		Style style = systemAPI.getSoftwareVersion().getMajorVersion() >= 5 ? new V5Style() : new V3Style();
-		return new PredefinedGraspsDaemonProgramNodeView(style);
+		return new AbilityHandGripProgramNodeView(style);
 	}
 
 	@Override
-	public PredefinedGraspsDaemonProgramNodeContribution createNode(ProgramAPIProvider apiProvider, PredefinedGraspsDaemonProgramNodeView view, DataModel model, CreationContext context) {
-		return new PredefinedGraspsDaemonProgramNodeContribution(apiProvider, view, model);
+	public AbilityHandGripProgramNodeContribution createNode(ProgramAPIProvider apiProvider, AbilityHandGripProgramNodeView view, DataModel model, CreationContext context) {
+		return new AbilityHandGripProgramNodeContribution(apiProvider, view, model);
 	}
 
 }

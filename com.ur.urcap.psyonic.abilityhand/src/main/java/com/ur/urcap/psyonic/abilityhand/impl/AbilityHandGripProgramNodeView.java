@@ -14,7 +14,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
-public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeView<PredefinedGraspsDaemonProgramNodeContribution> {
+public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<AbilityHandGripProgramNodeContribution> {
 	
 	private final Style style;
 
@@ -22,17 +22,17 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 
 	private JSlider speedSlider;
 
-	private ContributionProvider<PredefinedGraspsDaemonProgramNodeContribution> contributionProvider;
+	private ContributionProvider<AbilityHandGripProgramNodeContribution> contributionProvider;
 
 	private JComboBox graspsComboBox;
 
-	public PredefinedGraspsDaemonProgramNodeView(Style style) {
+	public AbilityHandGripProgramNodeView(Style style) {
 		this.style = style;
 		
 	}
 
 	@Override
-	public void buildUI(JPanel panel, final ContributionProvider<PredefinedGraspsDaemonProgramNodeContribution> provider) {
+	public void buildUI(JPanel panel, final ContributionProvider<AbilityHandGripProgramNodeContribution> provider) {
 		this.contributionProvider = provider;
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("Select the desired grip"), Component.LEFT_ALIGNMENT);
@@ -89,7 +89,7 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 		return section;
 	}
 
-	private Box createSliderBox(String label, final ContributionProvider<PredefinedGraspsDaemonProgramNodeContribution> provider) {
+	private Box createSliderBox(String label, final ContributionProvider<AbilityHandGripProgramNodeContribution> provider) {
         Box box = Box.createHorizontalBox();
         box.setAlignmentX(Component.LEFT_ALIGNMENT);
         box.add(new JLabel(label + ":"));
@@ -125,7 +125,7 @@ public class PredefinedGraspsDaemonProgramNodeView implements SwingProgramNodeVi
 
 	private void updateGraspCombobox() {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		PredefinedGraspsDaemonProgramNodeContribution contribution = contributionProvider.get();
+		AbilityHandGripProgramNodeContribution contribution = contributionProvider.get();
 
 		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch", "User Grip 7", "User Grip 8", "User Grip 9", "User Grip 10", "User Grip 11", "Trigger Grip", "User Grip 12", "User Grip 13", "User Grip 14", "User Grip 15", "User Grip 16", "User Grip 17", "User Grip 18", "Finger Wave"};
 		

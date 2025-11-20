@@ -26,7 +26,7 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNodeContribution {
+public class AbilityHandGripProgramNodeContribution implements ProgramNodeContribution {
 	private static final String GRASPKEY = "selected_grasp";
     private static final String GRASP_INDEX_KEY = "0";
 	private static final String SERVER_URL_KEY = "server_url";
@@ -35,14 +35,14 @@ public class PredefinedGraspsDaemonProgramNodeContribution implements ProgramNod
 	private static final String SPEED_KEY = "speed";
 	
 	private final ProgramAPIProvider apiProvider;
-	private final PredefinedGraspsDaemonProgramNodeView view;
+	private final AbilityHandGripProgramNodeView view;
 	private final DataModel model;
 	private XmlRpcClient xmlRpcClient;
 
 	private final UndoRedoManager undoRedoManager;
 
-	public PredefinedGraspsDaemonProgramNodeContribution(ProgramAPIProvider apiProvider,
-										   PredefinedGraspsDaemonProgramNodeView view,
+	public AbilityHandGripProgramNodeContribution(ProgramAPIProvider apiProvider,
+										   AbilityHandGripProgramNodeView view,
 										   DataModel model) {
 		// keyboardInputFactory = apiProvider.getUserInterfaceAPI().getUserInteraction().getKeyboardInputFactory();
 		this.apiProvider = apiProvider;

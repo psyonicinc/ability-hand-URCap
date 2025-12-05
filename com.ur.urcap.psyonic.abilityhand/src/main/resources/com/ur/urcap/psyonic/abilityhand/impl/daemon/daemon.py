@@ -24,11 +24,8 @@ class Daemon:
 		
 		# Socket variables
 		try:
-			# self.in_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-			# self.in_sock.settimeout(3)
 			self.server = MultithreadedSimpleXMLRPCServer((SOCKET_IP, XMLRPC_PORT), allow_none=True)
 			self.server.RequestHandlerClass.protocol_version = "HTTP/1.1"
-			# self.running = True
 			self.server.socket.settimeout(5)
 
 			# Register XMLRPC functions
@@ -36,6 +33,8 @@ class Daemon:
 			self.server.register_function(self.disconnect, "disconnect")
 			self.server.register_function(self.set_position, "set_position")
 			self.server.register_function(self.set_grip, "set_grip")
+			self.server.register_function(self.set_torque, "set_torque")
+			self.server.register_function(self.set_duty, "set_duty")
 		except Exception as e:
 			sys.stdout.write("daemon init fail\n")
 			sys.stdout.write(str(e))
@@ -102,6 +101,36 @@ class Daemon:
 				self.client.set_grip(raw_grip, speed)
 			except Exception as e:
 				sys.stderr.write("grip error\n")
+				sys.stdout.write(str(e))
+				self.client.close()
+			return True
+		else:
+			return True
+		
+		
+	def set_torque(self, torques):
+		if self.client:
+			try:
+				torques = [float(t)/100 for  t in torques]
+				torques[-1] = torques[-1] * -1
+				self.client.set_torque(torques)
+			except Exception as e:
+				sys.stderr.write("torque error\n")
+				sys.stdout.write(str(e))
+				self.client.close()
+			return True
+		else:
+			return True
+
+
+	def set_duty(self, duties):
+		if self.client:
+			try:
+				duties = [float(d) for d in duties]
+				duties[-1] = duties[-1] * -1
+				self.client.set_duty(duties)
+			except Exception as e:
+				sys.stderr.write("duty error\n")
 				sys.stdout.write(str(e))
 				self.client.close()
 			return True

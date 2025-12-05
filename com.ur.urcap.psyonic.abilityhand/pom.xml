@@ -22,7 +22,7 @@
 		<urcap.vendor>PSYONIC</urcap.vendor>
 		<urcap.contactAddress>10939 Technology Pl, San Diego, CA 92127</urcap.contactAddress>
 		<urcap.copyright>Copyright (C) 2025 PSYONIC</urcap.copyright>
-		<urcap.description>Daemon for managing Ability Hand connections</urcap.description>
+		<urcap.description>Daemon for managing Ability Hand connections and commands</urcap.description>
 		<urcap.licenseType>MIT</urcap.licenseType>
 		<urcap.compatibility.CB3>true</urcap.compatibility.CB3>
 		<urcap.compatibility.eSeries>true</urcap.compatibility.eSeries>

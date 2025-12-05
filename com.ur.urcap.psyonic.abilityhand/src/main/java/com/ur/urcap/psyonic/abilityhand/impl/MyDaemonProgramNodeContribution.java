@@ -52,23 +52,26 @@ public class MyDaemonProgramNodeContribution implements ProgramNodeContribution 
 
 	@Override
 	public void generateScript(ScriptWriter writer) {
+		
 		// Assign XMLRPC Variable
 		MyDaemonInstallationNodeContribution install = getInstallation();
-		writer.assign("daemon", install.getXMLRPCVariable());
-		
-		// Connect to Hand
-		String urBool = getSimulated() ? "True" : "False";
-		writer.appendLine("result = daemon.connect("+getBaud()+","+urBool+")");
-		writer.appendLine("popup(\"Ability Hand Connected?: \" + to_str(result), title=\"Ability Hand Connection\", warning=False, error=False, blocking=False)");
+		writer.assign("ah_daemon", install.getXMLRPCVariable());
 
+		// Make Sure Hand is Disconnected to Avoid Mulitple Client Connections
+		writer.appendLine("result = ah_daemon.disconnect()");
+
+		// Check If Simulated Hand
+		String urBool = getSimulated() ? "True" : "False";
+
+		// Connect to Hand Client
+    	writer.appendLine("result = ah_daemon.connect(" + getBaud() + "," + urBool + ")");
 		
 		// Execute Children Nodes
 		writer.writeChildren();
 		
 		// Disconnect Hand
-		writer.appendLine("result = daemon.disconnect()");
-		writer.appendLine("popup(\"Ability Hand Disconnected?: \" + to_str(result), title=\"Ability Hand Disconnect\", warning=False, error=False, blocking=False)");
-
+		writer.appendLine("result = ah_daemon.disconnect()");
+		
 	}
 	
 	@Override
@@ -133,4 +136,8 @@ public class MyDaemonProgramNodeContribution implements ProgramNodeContribution 
 		};
 		return items;
 	}
+
+	private String getServerUrl() {
+        return "http://localhost:40405";
+    }
 }

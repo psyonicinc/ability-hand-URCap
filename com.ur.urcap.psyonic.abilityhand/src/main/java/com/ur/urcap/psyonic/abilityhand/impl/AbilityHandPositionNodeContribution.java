@@ -108,17 +108,6 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 			@Override
 			public void executeChanges() {
 				model.set(key, value);
-			}
-		});
-
-    }
-
-    public void onCheckBoxSelection(final boolean checked) {
-        undoRedoManager.recordChanges(new UndoableChanges() {
-            
-            @Override
-            public void executeChanges() {
-                model.set(CHECKED_KEY, checked);
                 if (model.get(CHECKED_KEY, DEFAULT_CHECKED) == true) {
                     try {
                         daemonStatusMonitor.setPosition(
@@ -134,6 +123,17 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                         // Or show error in view: view.showError("Failed to set position: " + e.getMessage());
                     }
                 }
+			}
+		});
+
+    }
+
+    public void onCheckBoxSelection(final boolean checked) {
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            
+            @Override
+            public void executeChanges() {
+                model.set(CHECKED_KEY, checked);
             }
         });
     }

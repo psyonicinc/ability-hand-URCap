@@ -6,9 +6,12 @@ import com.ur.urcap.api.contribution.program.swing.SwingProgramNodeView;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
+import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.event.ChangeListener;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -28,6 +31,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
     private JLabel thumbValueLabel;
     private JLabel thumbOppValueLabel;
     private JLabel errorLabel;
+    private final JCheckBox posCheckBox = new JCheckBox("Move during Position Setting");
 
     @Override
     public void buildUI(JPanel panel, ContributionProvider<AbilityHandPositionNodeContribution> provider) {
@@ -42,6 +46,8 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         panel.add(createSliderBox("Pinky", provider));
         panel.add(createSliderBox("Thumb Flexor", provider));
         panel.add(createSliderBox("Thumb Opposition", provider));
+        panel.add(createVerticalSpacing(10));
+        panel.add(createCheckBox(posCheckBox, provider));
 
         // Error label
         errorLabel = new JLabel();
@@ -97,6 +103,23 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         // box.add(slider);
         return verticalBox;
     }
+
+    private Box createCheckBox(final JCheckBox checkbox, final ContributionProvider<AbilityHandPositionNodeContribution> provider) {
+		Box box = Box.createHorizontalBox();
+		box.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		checkbox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				provider.get().onCheckBoxSelection(checkbox.isSelected());
+				
+			}
+		});
+		
+		box.add(checkbox);
+		return box;
+	}
 
     public void updateSliders(int index, int middle, int ring, int pinky, int thumbFlexor, int thumbOpposition) {
         indexSlider.setValue(index);

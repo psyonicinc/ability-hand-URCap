@@ -26,11 +26,14 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     private static final String THUMB_FLEXOR_KEY = "thumb_flexor";
     private static final String THUMB_OPPOSITION_KEY = "thumb_opposition";
     private static final int DEFAULT_POSITION = 0;
+    private static final String CHECKED_KEY = "checked";
+    private static final boolean DEFAULT_CHECKED = false;
 
     private final ProgramAPIProvider apiProvider;
     private final AbilityHandPositionNodeView view;
     private final DataModel model;
     private XmlRpcClient xmlRpcClient;
+    private final XmlRpcMyDaemonInterface daemonStatusMonitor;
     
     private final UndoRedoManager undoRedoManager;
 
@@ -38,6 +41,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         this.apiProvider = apiProvider;
         this.view = view;
         this.model = model;
+        this.daemonStatusMonitor = getInstallation().getXmlRpcDaemonInterface();
         
         this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
         establishXmlRpcConnection();
@@ -108,6 +112,35 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 		});
 
     }
+
+    public void onCheckBoxSelection(final boolean checked) {
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            
+            @Override
+            public void executeChanges() {
+                model.set(CHECKED_KEY, checked);
+                if (model.get(CHECKED_KEY, DEFAULT_CHECKED) == true) {
+                    try {
+                        daemonStatusMonitor.setPosition(
+                            getPosition(INDEX_KEY),
+                            getPosition(MIDDLE_KEY),
+                            getPosition(RING_KEY),
+                            getPosition(PINKY_KEY),
+                            getPosition(THUMB_FLEXOR_KEY),
+                            getPosition(THUMB_OPPOSITION_KEY));
+                    } catch (XmlRpcException | UnknownResponseException e) {
+                        // Handle the error appropriately
+                        e.printStackTrace();
+                        // Or show error in view: view.showError("Failed to set position: " + e.getMessage());
+                    }
+                }
+            }
+        });
+    }
+
+    private boolean getChecked() {
+		return model.get(CHECKED_KEY, DEFAULT_CHECKED);
+	}
 
     private int getPosition(String key) {
         return model.get(key, DEFAULT_POSITION);

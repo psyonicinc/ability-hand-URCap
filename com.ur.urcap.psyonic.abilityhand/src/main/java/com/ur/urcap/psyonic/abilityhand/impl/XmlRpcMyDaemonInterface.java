@@ -72,4 +72,16 @@ public class XmlRpcMyDaemonInterface {
 			throw new UnknownResponseException();
 		}
 	}
+
+	public void setPosition(Integer index, Integer middle, Integer ring, Integer pinky, Integer thumbFlexor, Integer thumbOpposition) throws XmlRpcException, UnknownResponseException {
+		ArrayList<Integer> args = new ArrayList<Integer>();
+		args.add(index);
+		args.add(middle);
+		args.add(ring);
+		args.add(pinky);
+		args.add(thumbFlexor);
+		args.add(thumbOpposition);
+		Object result = client.execute("set_position", args);
+		processString(result);
+	}
 }

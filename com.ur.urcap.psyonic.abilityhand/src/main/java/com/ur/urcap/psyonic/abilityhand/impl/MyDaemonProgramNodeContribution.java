@@ -22,12 +22,14 @@ public class MyDaemonProgramNodeContribution implements ProgramNodeContribution 
 	private static final String SIMULATED_KEY = "simulated";
 	private static final boolean DEFAULT_SIMULATED = false;
 
+	private final XmlRpcMyDaemonInterface daemonStatusMonitor;
 
 	public MyDaemonProgramNodeContribution(ProgramAPIProvider apiProvider, MyDaemonProgramNodeView view, DataModel model) {
 		this.apiProvider = apiProvider;
 		this.view = view;
 		this.model = model;
 		this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
+		this.daemonStatusMonitor = getInstallation().getXmlRpcDaemonInterface();
 	}
 
 	@Override

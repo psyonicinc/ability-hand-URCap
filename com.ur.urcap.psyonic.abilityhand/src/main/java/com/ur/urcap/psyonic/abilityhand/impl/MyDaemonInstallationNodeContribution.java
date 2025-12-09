@@ -15,6 +15,7 @@ import java.awt.*;
 import java.util.Timer;
 import java.util.TimerTask;
 
+
 public class MyDaemonInstallationNodeContribution implements InstallationNodeContribution {
 
 	private static final String ENABLED_KEY = "enabled";
@@ -68,6 +69,14 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	public void generateScript(ScriptWriter writer) {
 		// Assign XMLRPC_VARIABLE
 		writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"http://127.0.0.1:" + PORT + "/RPC2\")");
+		writer.assign("ah_daemon", XMLRPC_VARIABLE);
+		
+		// Make Sure Hand is Disconnected to Avoid Mulitple Client Connections
+		writer.appendLine("result = ah_daemon.disconnect()");
+
+		// Connect to Hand Client
+    	writer.appendLine("result = ah_daemon.connect(0, False)");
+		
 	}
 
 	private void updateUI() {
@@ -151,4 +160,5 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	public XmlRpcMyDaemonInterface getXmlRpcDaemonInterface() {
 		return xmlRpcDaemonInterface;
 	}
+
 }

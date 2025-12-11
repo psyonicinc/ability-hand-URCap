@@ -84,4 +84,12 @@ public class XmlRpcMyDaemonInterface {
 		Object result = client.execute("set_position", args);
 		processString(result);
 	}
+
+	public void setGrip(Integer grasp_index, Integer speed) throws XmlRpcException, UnknownResponseException {
+		ArrayList<Integer> args = new ArrayList<Integer>();
+		args.add(grasp_index);
+		args.add(speed);
+		Object result = client.execute("set_grip", args);
+		processString(result);
+	}
 }

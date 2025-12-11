@@ -26,28 +26,32 @@ import java.util.List;
 
 import javax.swing.SwingUtilities;
 
-public class AbilityHandGripProgramNodeContribution implements ProgramNodeContribution {
+public class AbilityHandGripNodeContribution implements ProgramNodeContribution {
 	private static final String GRASPKEY = "selected_grasp";
     private static final String GRASP_INDEX_KEY = "0";
 	private static final String SERVER_URL_KEY = "server_url";
     private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
 	private static final int DEFAULT_SPEED_KEY = 255;
 	private static final String SPEED_KEY = "speed";
+	private static final String CHECKED_KEY = "checked";
+    private static final boolean DEFAULT_CHECKED = false;
 	
 	private final ProgramAPIProvider apiProvider;
-	private final AbilityHandGripProgramNodeView view;
+	private final AbilityHandGripNodeView view;
 	private final DataModel model;
 	private XmlRpcClient xmlRpcClient;
+	private final XmlRpcMyDaemonInterface daemonStatusMonitor;
 
 	private final UndoRedoManager undoRedoManager;
 
-	public AbilityHandGripProgramNodeContribution(ProgramAPIProvider apiProvider,
-										   AbilityHandGripProgramNodeView view,
+	public AbilityHandGripNodeContribution(ProgramAPIProvider apiProvider,
+										   AbilityHandGripNodeView view,
 										   DataModel model) {
 		// keyboardInputFactory = apiProvider.getUserInterfaceAPI().getUserInteraction().getKeyboardInputFactory();
 		this.apiProvider = apiProvider;
 		this.view = view;
 		this.model = model;
+		this.daemonStatusMonitor = getInstallation().getXmlRpcDaemonInterface();
 
 		this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
 		establishXmlRpcConnection();
@@ -122,15 +126,31 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 			try {
 				apiProvider.getProgramAPI().getUndoRedoManager().recordChanges(new UndoableChanges() {
 					public void executeChanges() {
-						model.set(GRASPKEY, grasp);
-						model.set(GRASP_INDEX_KEY, Integer.toString(grasp_index));
+						try {
+							model.set(GRASPKEY, grasp);
+							model.set(GRASP_INDEX_KEY, Integer.toString(grasp_index));
+							daemonStatusMonitor.setGrip(
+								getSelectedGraspIndex(), getSpeed());
+						} catch (XmlRpcException | UnknownResponseException e) {
+							System.err.println("Could not set grasp selection: " + e.getMessage());
+						}
 					}
 				});
 			} catch (Exception e) {
-				System.err.println("Could not set grasp selection: " + e.getMessage());
+				System.err.println("Error recording changes: " + e.getMessage());
 			}
 		}
 	}
+
+	public void onCheckBoxSelection(final boolean checked) {
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            
+            @Override
+            public void executeChanges() {
+                model.set(CHECKED_KEY, checked);
+            }
+        });
+    }
 
 	public String getSelectedGrasp() {
     try {

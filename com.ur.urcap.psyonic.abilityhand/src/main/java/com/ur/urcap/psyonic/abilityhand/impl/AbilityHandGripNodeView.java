@@ -10,11 +10,12 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSlider;
+import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 
-public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<AbilityHandGripProgramNodeContribution> {
+public class AbilityHandGripNodeView implements SwingProgramNodeView<AbilityHandGripNodeContribution> {
 	
 	private final Style style;
 
@@ -22,17 +23,20 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 
 	private JSlider speedSlider;
 
-	private ContributionProvider<AbilityHandGripProgramNodeContribution> contributionProvider;
+	private final JCheckBox posCheckBox = new JCheckBox("Move during Grip Setting");
+
+
+	private ContributionProvider<AbilityHandGripNodeContribution> contributionProvider;
 
 	private JComboBox graspsComboBox;
 
-	public AbilityHandGripProgramNodeView(Style style) {
+	public AbilityHandGripNodeView(Style style) {
 		this.style = style;
 		
 	}
 
 	@Override
-	public void buildUI(JPanel panel, final ContributionProvider<AbilityHandGripProgramNodeContribution> provider) {
+	public void buildUI(JPanel panel, final ContributionProvider<AbilityHandGripNodeContribution> provider) {
 		this.contributionProvider = provider;
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(new JLabel("Select the desired grip"), Component.LEFT_ALIGNMENT);
@@ -43,6 +47,8 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 
 		panel.add(createSliderBox("SPEED", provider));
 		panel.add(new JLabel("(set SPEED to 0 to stop grip)"), Component.LEFT_ALIGNMENT);
+		panel.add(createVerticalSpacing());
+		panel.add(createCheckBox(posCheckBox, provider));
 
 
 		errorLabel = new JLabel();
@@ -89,7 +95,7 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 		return section;
 	}
 
-	private Box createSliderBox(String label, final ContributionProvider<AbilityHandGripProgramNodeContribution> provider) {
+	private Box createSliderBox(String label, final ContributionProvider<AbilityHandGripNodeContribution> provider) {
         Box box = Box.createHorizontalBox();
         box.setAlignmentX(Component.LEFT_ALIGNMENT);
         box.add(new JLabel(label + ":"));
@@ -118,6 +124,23 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
         return box;
     }
 
+	private Box createCheckBox(final JCheckBox checkbox, final ContributionProvider<AbilityHandGripNodeContribution> provider) {
+		Box box = Box.createHorizontalBox();
+		box.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
+		checkbox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				provider.get().onCheckBoxSelection(checkbox.isSelected());
+				
+			}
+		});
+		
+		box.add(checkbox);
+		return box;
+	}
+
     public void updateSliders(int speed) {
         speedSlider.setValue(speed);
 
@@ -125,7 +148,7 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 
 	private void updateGraspCombobox() {
 		DefaultComboBoxModel model = new DefaultComboBoxModel();
-		AbilityHandGripProgramNodeContribution contribution = contributionProvider.get();
+		AbilityHandGripNodeContribution contribution = contributionProvider.get();
 
 		String[] grasps = { "Open", "Power", "Key", "Pinch", "Tripod Opened", "Sign of the Horns", "Cylinder", "Mouse Grasp", "Power/Key Switch", "Point", "Rude...", "Hook", "Relax", "Sleeve", "Peace", "Tripod Closed", "Hang Loose", "Handshake", "Fixed Pinch", "User Grip 7", "User Grip 8", "User Grip 9", "User Grip 10", "User Grip 11", "Trigger Grip", "User Grip 12", "User Grip 13", "User Grip 14", "User Grip 15", "User Grip 16", "User Grip 17", "User Grip 18", "Finger Wave"};
 		

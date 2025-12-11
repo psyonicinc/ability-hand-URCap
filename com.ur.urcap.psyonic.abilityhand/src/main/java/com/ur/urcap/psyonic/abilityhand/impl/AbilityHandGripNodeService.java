@@ -10,9 +10,9 @@ import com.ur.urcap.api.domain.data.DataModel;
 
 import java.util.Locale;
 
-public class AbilityHandGripProgramNodeService implements SwingProgramNodeService<AbilityHandGripProgramNodeContribution, AbilityHandGripProgramNodeView> {
+public class AbilityHandGripNodeService implements SwingProgramNodeService<AbilityHandGripNodeContribution, AbilityHandGripNodeView> {
 
-	public AbilityHandGripProgramNodeService() {
+	public AbilityHandGripNodeService() {
 	}
 
 	@Override
@@ -31,15 +31,15 @@ public class AbilityHandGripProgramNodeService implements SwingProgramNodeServic
 	}
 
 	@Override
-	public AbilityHandGripProgramNodeView createView(ViewAPIProvider apiProvider) {
+	public AbilityHandGripNodeView createView(ViewAPIProvider apiProvider) {
 		SystemAPI systemAPI = apiProvider.getSystemAPI();
 		Style style = systemAPI.getSoftwareVersion().getMajorVersion() >= 5 ? new V5Style() : new V3Style();
-		return new AbilityHandGripProgramNodeView(style);
+		return new AbilityHandGripNodeView(style);
 	}
 
 	@Override
-	public AbilityHandGripProgramNodeContribution createNode(ProgramAPIProvider apiProvider, AbilityHandGripProgramNodeView view, DataModel model, CreationContext context) {
-		return new AbilityHandGripProgramNodeContribution(apiProvider, view, model);
+	public AbilityHandGripNodeContribution createNode(ProgramAPIProvider apiProvider, AbilityHandGripNodeView view, DataModel model, CreationContext context) {
+		return new AbilityHandGripNodeContribution(apiProvider, view, model);
 	}
 
 }

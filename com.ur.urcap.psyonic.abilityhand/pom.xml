@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.ur.urcap.psyonic</groupId>
-	<artifactId>abilityhand</artifactId>
+	<artifactId>abilityhand-dev</artifactId>
 	<version>1.0</version>
 	<name>Ability Hand Daemon</name>
 	<packaging>bundle</packaging>

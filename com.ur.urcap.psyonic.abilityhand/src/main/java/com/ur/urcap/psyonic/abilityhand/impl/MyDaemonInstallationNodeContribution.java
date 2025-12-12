@@ -125,12 +125,15 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 					try {
 						pauseTimer = true;
 						awaitDaemonRunning(5000);
+						xmlRpcDaemonInterface.disconnect();
+                    	xmlRpcDaemonInterface.connect();
 					} catch(Exception e){
 						System.err.println("Could not set the title in the daemon process.");
 					} finally {
 						pauseTimer = false;
 					}
 				} else {
+					// daemonService.disconnectABH();
 					daemonService.getDaemon().stop();
 				}
 			}

@@ -32,6 +32,7 @@ class Daemon:
 			self.server.register_function(self.connect, "connect")
 			self.server.register_function(self.disconnect, "disconnect")
 			self.server.register_function(self.set_position, "set_position")
+			self.server.register_function(self.set_position, "set_track_position")
 			self.server.register_function(self.set_grip, "set_grip")
 			self.server.register_function(self.set_torque, "set_torque")
 			self.server.register_function(self.set_duty, "set_duty")

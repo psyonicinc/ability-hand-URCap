@@ -73,16 +73,16 @@ public class XmlRpcMyDaemonInterface {
 		}
 	}
 
-	public void setPosition(Integer index, Integer middle, Integer ring, Integer pinky, Integer thumbFlexor, Integer thumbOpposition) throws XmlRpcException, UnknownResponseException {
-		ArrayList<Integer> args = new ArrayList<Integer>();
-		args.add(index);
-		args.add(middle);
-		args.add(ring);
-		args.add(pinky);
-		args.add(thumbFlexor);
-		args.add(thumbOpposition);
-		Object result = client.execute("set_position", args);
+	public void disconnectABH() throws XmlRpcException, UnknownResponseException {
+		Object result = client.execute("disconnect", new ArrayList<String>());
 		processString(result);
+	}
+
+	public void setPosition(Integer[] positions) throws XmlRpcException, UnknownResponseException {
+		ArrayList<Object> args = new ArrayList<Object>();
+		args.add(positions);
+		Object result = client.execute("set_position", args);
+		processBoolean(result);
 	}
 
 	public void setGrip(Integer grasp_index, Integer speed) throws XmlRpcException, UnknownResponseException {
@@ -90,6 +90,17 @@ public class XmlRpcMyDaemonInterface {
 		args.add(grasp_index);
 		args.add(speed);
 		Object result = client.execute("set_grip", args);
-		processString(result);
+		processBoolean(result);
 	}
+
+	public boolean connect() throws Exception {
+        Object[] params = new Object[]{0, false};
+        Object result = client.execute("connect", params);
+        return (Boolean) result;
+    }
+    
+    public boolean disconnect() throws Exception {
+        Object result = client.execute("disconnect", new Object[]{});
+        return (Boolean) result;
+    }
 }

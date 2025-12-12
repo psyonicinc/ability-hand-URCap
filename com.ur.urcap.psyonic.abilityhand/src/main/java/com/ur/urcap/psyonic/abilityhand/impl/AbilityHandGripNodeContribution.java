@@ -129,8 +129,10 @@ public class AbilityHandGripNodeContribution implements ProgramNodeContribution 
 						try {
 							model.set(GRASPKEY, grasp);
 							model.set(GRASP_INDEX_KEY, Integer.toString(grasp_index));
-							daemonStatusMonitor.setGrip(
-								getSelectedGraspIndex(), getSpeed());
+							if (model.get(CHECKED_KEY, DEFAULT_CHECKED) == true) {
+								daemonStatusMonitor.setGrip(
+									getSelectedGraspIndex(), getSpeed());
+							}
 						} catch (XmlRpcException | UnknownResponseException e) {
 							System.err.println("Could not set grasp selection: " + e.getMessage());
 						}

@@ -108,15 +108,17 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 			@Override
 			public void executeChanges() {
 				model.set(key, value);
+                
                 if (model.get(CHECKED_KEY, DEFAULT_CHECKED) == true) {
                     try {
-                        daemonStatusMonitor.setPosition(
+                        daemonStatusMonitor.setPosition(new Integer[]{
                             getPosition(INDEX_KEY),
                             getPosition(MIDDLE_KEY),
                             getPosition(RING_KEY),
                             getPosition(PINKY_KEY),
                             getPosition(THUMB_FLEXOR_KEY),
-                            getPosition(THUMB_OPPOSITION_KEY));
+                            getPosition(THUMB_OPPOSITION_KEY)
+                        });
                     } catch (XmlRpcException | UnknownResponseException e) {
                         // Handle the error appropriately
                         e.printStackTrace();

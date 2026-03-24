@@ -8,6 +8,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Component;
@@ -21,6 +22,8 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
     private JSlider pinkySlider;
     private JSlider thumbFlexorSlider;
     private JSlider thumbOppositionSlider;
+    private JCheckBox liveTrackingCheckBox;
+
     private JLabel indexValueLabel;
     private JLabel middleValueLabel;
     private JLabel ringValueLabel;
@@ -42,6 +45,17 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         panel.add(createSliderBox("Pinky", provider));
         panel.add(createSliderBox("Thumb Flexor", provider));
         panel.add(createSliderBox("Thumb Opposition", provider));
+
+        panel.add(createVerticalSpacing(10));
+
+        liveTrackingCheckbox = new JCheckBox("Live Position Tracking");
+        liveTrackingCheckbox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panel.add(liveTrackingCheckbox);
+
+        liveTrackingCheckbox.addActionListener(e -> {
+        provider.get().setLiveTracking(liveTrackingCheckbox.isSelected());
+        });
 
         // Error label
         errorLabel = new JLabel();
@@ -76,6 +90,10 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
                 valueLabel.setText(String.valueOf(value));
                 String key = label.toLowerCase().replace(" ", "_");
                 provider.get().updatePosition(key, value);
+
+                if (liveTrackingCheckBox != null && liveTrackingCheckBox.isSelected()) {
+                    provider.updateHandPosition();
+                }
             }
         });
 

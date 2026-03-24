@@ -17,8 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AbilityHandDutyNodeContribution implements ProgramNodeContribution {
-    private static final String SERVER_URL_KEY = "server_url";
-    private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
+    // private static final String SERVER_URL_KEY = "server_url";
+    // private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
     private static final String INDEX_KEY = "index";
     private static final String MIDDLE_KEY = "middle";
     private static final String RING_KEY = "ring";
@@ -40,21 +40,21 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
         this.model = model;
         
         this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
-        establishXmlRpcConnection();
+        // establishXmlRpcConnection();
     }
 
-    private void establishXmlRpcConnection() {
-        String serverUrl = getServerUrl();
-        try {
-            XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            config.setServerURL(new URL(serverUrl));
-            xmlRpcClient = new XmlRpcClient();
-            xmlRpcClient.setConfig(config);
-        } catch (MalformedURLException e) {
-            // Handle connection error, perhaps log or show in view
-            view.showError("Invalid server URL: " + serverUrl);
-        }
-    }
+    // private void establishXmlRpcConnection() {
+    //     String serverUrl = getServerUrl();
+    //     try {
+    //         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+    //         config.setServerURL(new URL(serverUrl));
+    //         xmlRpcClient = new XmlRpcClient();
+    //         xmlRpcClient.setConfig(config);
+    //     } catch (MalformedURLException e) {
+    //         // Handle connection error, perhaps log or show in view
+    //         view.showError("Invalid server URL: " + serverUrl);
+    //     }
+    // }
 
     @Override
     public void openView() {
@@ -88,8 +88,17 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
     public void generateScript(ScriptWriter writer) {
         MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-        writer.appendLine("ah_daemon.set_duty([\"" + getPosition(INDEX_KEY) + "\",\"" + getPosition(MIDDLE_KEY) + "\", \"" + getPosition(RING_KEY) + "\", \"" + getPosition(PINKY_KEY) + "\",\"" + getPosition(THUMB_FLEXOR_KEY) + "\",\"" + getPosition(THUMB_OPPOSITION_KEY) + "\"])");
-
+        // writer.appendLine("ah_daemon.set_duty([\"" + getPosition(INDEX_KEY) + "\",\"" + getPosition(MIDDLE_KEY) + "\", \"" + getPosition(RING_KEY) + "\", \"" + getPosition(PINKY_KEY) + "\",\"" + getPosition(THUMB_FLEXOR_KEY) + "\",\"" + getPosition(THUMB_OPPOSITION_KEY) + "\"])");
+        writer.appendLine(
+        "ah_daemon.setDuty([" +
+        (double) getPosition(INDEX_KEY) + "," +
+        (double) getPosition(MIDDLE_KEY) + "," +
+        (double) getPosition(RING_KEY) + "," +
+        (double) getPosition(PINKY_KEY) + "," +
+        (double) getPosition(THUMB_FLEXOR_KEY) + "," +
+        (double) getPosition(THUMB_OPPOSITION_KEY) +
+        "])"
+        );
     }
 
     private MyDaemonInstallationNodeContribution getInstallation(){
@@ -112,7 +121,7 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
         return model.get(key, DEFAULT_POSITION);
     }
 
-    private String getServerUrl() {
-        return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
-    }
+    // private String getServerUrl() {
+    //     return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
+    // }
 }

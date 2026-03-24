@@ -29,8 +29,8 @@ import javax.swing.SwingUtilities;
 public class AbilityHandGripProgramNodeContribution implements ProgramNodeContribution {
 	private static final String GRASPKEY = "selected_grasp";
     private static final String GRASP_INDEX_KEY = "0";
-	private static final String SERVER_URL_KEY = "server_url";
-    private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
+	// private static final String SERVER_URL_KEY = "server_url";
+    // private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
 	private static final int DEFAULT_SPEED_KEY = 255;
 	private static final String SPEED_KEY = "speed";
 	
@@ -50,22 +50,22 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		this.model = model;
 
 		this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
-		establishXmlRpcConnection();
+		// establishXmlRpcConnection();
 
 	}
 
-	private void establishXmlRpcConnection() {
-        String serverUrl = getServerUrl();
-        try {
-            XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            config.setServerURL(new URL(serverUrl));
-            xmlRpcClient = new XmlRpcClient();
-            xmlRpcClient.setConfig(config);
-        } catch (MalformedURLException e) {
-            // Handle connection error, perhaps log or show in view
-            view.showError("Invalid server URL: " + serverUrl);
-        }
-    }
+	// private void establishXmlRpcConnection() {
+    //     String serverUrl = getServerUrl();
+    //     try {
+    //         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
+    //         config.setServerURL(new URL(serverUrl));
+    //         xmlRpcClient = new XmlRpcClient();
+    //         xmlRpcClient.setConfig(config);
+    //     } catch (MalformedURLException e) {
+    //         // Handle connection error, perhaps log or show in view
+    //         view.showError("Invalid server URL: " + serverUrl);
+    //     }
+    // }
 
 
 	@Override
@@ -95,7 +95,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		// Note, alternatively plain sockets can be used.
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-        writer.appendLine("ah_daemon.set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+        // writer.appendLine("ah_daemon.set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
 
 	}
 
@@ -156,8 +156,8 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
         return model.get(SPEED_KEY, DEFAULT_SPEED_KEY);
     }
 
-    private String getServerUrl() {
-        return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
-    }
+    // private String getServerUrl() {
+    //     return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
+    // }
 
 }

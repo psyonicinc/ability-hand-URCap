@@ -56,7 +56,7 @@ public class XmlRpcMyDaemonInterface {
 
 	private boolean tryExecuteIsReachable() {
 		try {
-			return (Boolean) XML_RPC_CLIENT.execute("isReachable", new ArrayList<String>());
+			return (Boolean) client.execute("isReachable", new ArrayList<String>());
 		} catch (XmlRpcException ignored) {
 			return false;
 		}

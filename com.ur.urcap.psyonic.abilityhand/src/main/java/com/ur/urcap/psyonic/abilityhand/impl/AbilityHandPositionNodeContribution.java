@@ -145,14 +145,14 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     }
 
     private XmlRpcMyDaemonInterface getDaemonInterface() {
-    return getInstallation().getDaemonInterface();
+    return getInstallation().getXmlRpcDaemonInterface();
     }
 
     private int getPosition(String key) {
         return model.get(key, DEFAULT_POSITION);
     }
 
-    private void updateHandPosition() {
+    public void updateHandPosition() {
 
         List<Double> cmd = Arrays.asList(
         (double) getPosition(INDEX_KEY),

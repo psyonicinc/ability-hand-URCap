@@ -22,7 +22,8 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
     private JSlider pinkySlider;
     private JSlider thumbFlexorSlider;
     private JSlider thumbOppositionSlider;
-    private JCheckBox liveTrackingCheckBox;
+
+    private JCheckBox liveTrackingCheckbox;
 
     private JLabel indexValueLabel;
     private JLabel middleValueLabel;
@@ -91,8 +92,8 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
                 String key = label.toLowerCase().replace(" ", "_");
                 provider.get().updatePosition(key, value);
 
-                if (liveTrackingCheckBox != null && liveTrackingCheckBox.isSelected()) {
-                    provider.updateHandPosition();
+                if (liveTrackingCheckbox != null && liveTrackingCheckbox.isSelected()) {
+                    provider.get().updateHandPosition();
                 }
             }
         });

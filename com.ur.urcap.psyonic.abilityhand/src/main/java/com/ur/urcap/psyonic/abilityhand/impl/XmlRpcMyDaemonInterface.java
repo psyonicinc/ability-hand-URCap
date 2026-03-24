@@ -8,6 +8,12 @@ import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.Collections;
 
 public class XmlRpcMyDaemonInterface {
@@ -73,17 +79,31 @@ public class XmlRpcMyDaemonInterface {
 	}
 
 	public boolean setPosition(List<Double> cmd) {
-		return processBoolean(client.execute("setPosition", Collections.singletonList(cmd)));
+		try {
+			return processBoolean(client.execute("setPosition", Collections.singletonList(cmd)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public boolean setTorque(List<Double> cmd) {
+		try {
 		return processBoolean(client.execute("setTorque", Collections.singletonList(cmd)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public boolean setDuty(List<Double> cmd) {
+		try {
 		return processBoolean(client.execute("setDuty", Collections.singletonList(cmd)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
-
 
 	private boolean processBoolean(Object response) throws UnknownResponseException {
 		if (response instanceof Boolean) {

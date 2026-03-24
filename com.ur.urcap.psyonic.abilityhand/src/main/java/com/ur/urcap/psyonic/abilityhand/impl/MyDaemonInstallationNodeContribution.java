@@ -20,10 +20,11 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	private static final String ENABLED_KEY = "enabled";
 
 	private DataModel model;
-
 	private final MyDaemonInstallationNodeView view;
 	private final MyDaemonDaemonService daemonService;
-	private XmlRpcMyDaemonInterface xmlRpcDaemonInterface;
+	private XmlRpcMyDaemonInterface xmlDaemonInterface;
+	// private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+	// private ScheduledFuture<?> scheduleAtFixedRate;
 	private static String XMLRPC_VARIABLE = "ah_daemon";
 	private Timer uiTimer;
 	private boolean pauseTimer = false;
@@ -33,11 +34,10 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 												DataModel model, 
 												MyDaemonDaemonService daemonService, 
 												XmlRpcMyDaemonInterface xmlRpcMyDaemonInterface,
-												CreationContext context) 
-												{
+												CreationContext context) {
 		this.view = view;
 		this.daemonService = daemonService;
-		this.xmlRpcDaemonInterface = xmlRpcMyDaemonInterface;
+		this.xmlDaemonInterface = xmlRpcMyDaemonInterface;
 		this.model = model;
 		applyDesiredDaemonStatus();
 	}
@@ -137,7 +137,7 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	private void awaitDaemonRunning(long timeOutMilliSeconds) throws InterruptedException {
 		daemonService.getDaemon().start();
 		long endTime = System.nanoTime() + timeOutMilliSeconds * 1000L * 1000L;
-		while(System.nanoTime() < endTime && (daemonService.getDaemon().getState() != DaemonContribution.State.RUNNING || !xmlRpcDaemonInterface.isReachable())) {
+		while(System.nanoTime() < endTime && (daemonService.getDaemon().getState() != DaemonContribution.State.RUNNING || !xmlDaemonInterface.isDaemonReachable())) {
 			Thread.sleep(100);
 		}
 	}
@@ -149,12 +149,13 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	private Boolean isDaemonEnabled() {
 		return model.get(ENABLED_KEY, true); //This daemon is enabled by default
 	}
+
 	
 	public String getXMLRPCVariable(){
 		return XMLRPC_VARIABLE;
 	}
 	
 	public XmlRpcMyDaemonInterface getXmlRpcDaemonInterface() {
-		return xmlRpcDaemonInterface;
+		return xmlDaemonInterface;
 	}
 }

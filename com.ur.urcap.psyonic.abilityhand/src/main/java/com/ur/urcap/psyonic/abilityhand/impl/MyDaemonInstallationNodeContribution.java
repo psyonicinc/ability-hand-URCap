@@ -18,7 +18,6 @@ import java.util.TimerTask;
 public class MyDaemonInstallationNodeContribution implements InstallationNodeContribution {
 
 	private static final String ENABLED_KEY = "enabled";
-	public static final int PORT = 40405;
 
 	private DataModel model;
 
@@ -29,11 +28,17 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	private Timer uiTimer;
 	private boolean pauseTimer = false;
 
-	public MyDaemonInstallationNodeContribution(InstallationAPIProvider apiProvider, MyDaemonInstallationNodeView view, DataModel model, MyDaemonDaemonService daemonService, CreationContext context) {
+	public MyDaemonInstallationNodeContribution(InstallationAPIProvider apiProvider,
+												MyDaemonInstallationNodeView view,
+												DataModel model, 
+												MyDaemonDaemonService daemonService, 
+												XmlRpcMyDaemonInterface xmlRpcMyDaemonInterface,
+												CreationContext context) 
+												{
 		this.view = view;
 		this.daemonService = daemonService;
+		this.xmlRpcDaemonInterface = xmlRpcMyDaemonInterface;
 		this.model = model;
-		xmlRpcDaemonInterface = new XmlRpcMyDaemonInterface("127.0.0.1", PORT);
 		applyDesiredDaemonStatus();
 	}
 
@@ -67,7 +72,8 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	@Override
 	public void generateScript(ScriptWriter writer) {
 		// Assign XMLRPC_VARIABLE
-		writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"http://127.0.0.1:" + PORT + "/RPC2\")");
+		// writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"http://127.0.0.1:" + PORT + "/RPC2\")");
+		writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"" + XmlRpcMyDaemonInterface.getDaemonUrl() + "\")");
 	}
 
 	private void updateUI() {

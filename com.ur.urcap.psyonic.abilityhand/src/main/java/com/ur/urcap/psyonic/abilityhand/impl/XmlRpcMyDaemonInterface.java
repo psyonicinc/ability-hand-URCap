@@ -8,53 +8,82 @@ import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class XmlRpcMyDaemonInterface {
-
+	private static final int PORT = 40405;
+	private static final String HOST_IP = "127.0.0.1";
 	private static final XmlRpcClient client = new XmlRpcClient();
+	private static final XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
-	public XmlRpcMyDaemonInterface(String host, int port) {
-		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		config.setEnabledForExtensions(true);
+	private final AtomicBoolean isDaemonReachable = new AtomicBoolean(false);
+	private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+	private ScheduledFuture<?> scheduleAtFixedRate;
 
+	public XmlRpcMyDaemonInterface() {
+		setupXmlRpcClient();
+		startMonitorThread();
+	}
+
+	public static String getDaemonUrl() {
+		return "http://" + HOST_IP + ":" + PORT + "/RPC2";
+	}
+
+	private static void setupXmlRpcClient() {
 		try {
-			config.setServerURL(new URL("http://" + host + ":" + port + "/RPC2"));
+			config.setEnabledForExtensions(true);
+			config.setServerURL(new URL(getDaemonUrl()));
+			config.setConnectionTimeout(10000); //10s
+			config.setReplyTimeout(10000); //10s ... used to be 60s
+
+			client.setConfig(config);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		config.setConnectionTimeout(10000); //10s
-		config.setReplyTimeout(10000); //10s ... used to be 60s
-
-		client.setConfig(config);
 	}
 
-	public boolean isReachable() {
+	public void startMonitorThread() {
+		Runnable containerMonitorRunnable = new Runnable() {
+			@Override
+			public void run() {
+				isDaemonReachable.set(XmlRpcMyDaemonInterface.this.tryExecuteIsReachable());
+			}
+		};
+
+		stopMonitorThread();
+		scheduleAtFixedRate = executorService.scheduleWithFixedDelay(containerMonitorRunnable, 0, 1, TimeUnit.SECONDS);
+	}
+
+	private boolean tryExecuteIsReachable() {
 		try {
-			client.execute("get_title", new ArrayList<String>());
-			return true;
-		} catch (XmlRpcException e) {
+			return (Boolean) XML_RPC_CLIENT.execute("isReachable", new ArrayList<String>());
+		} catch (XmlRpcException ignored) {
 			return false;
 		}
 	}
 
-	public String getTitle() throws XmlRpcException, UnknownResponseException {
-		Object result = client.execute("get_title", new ArrayList<String>());
-		return processString(result);
+	public void stopMonitorThread() {
+		if (scheduleAtFixedRate != null) {
+			scheduleAtFixedRate.cancel(true);
+		}
 	}
 
-	public String setTitle(String title) throws XmlRpcException, UnknownResponseException {
-		ArrayList<String> args = new ArrayList<String>();
-		args.add(title);
-		Object result = client.execute("set_title", args);
-		return processString(result);
+	public boolean isDaemonReachable() {
+		return isDaemonReachable.get();
 	}
 
-	public String getMessage(String name) throws XmlRpcException, UnknownResponseException {
-		ArrayList<String> args = new ArrayList<String>();
-		args.add(name);
-		Object result = client.execute("get_message", args);
-		return processString(result);
+	public boolean setPosition(List<Double> cmd) {
+		return processBoolean(client.execute("setPosition", Collections.singletonList(cmd)));
 	}
+
+	public boolean setTorque(List<Double> cmd) {
+		return processBoolean(client.execute("setTorque", Collections.singletonList(cmd)));
+	}
+
+	public boolean setDuty(List<Double> cmd) {
+		return processBoolean(client.execute("setDuty", Collections.singletonList(cmd)));
+	}
+
 
 	private boolean processBoolean(Object response) throws UnknownResponseException {
 		if (response instanceof Boolean) {

@@ -1,0 +1,39 @@
+Import('env')
+
+daemon_env = env.Clone()
+
+daemon_sources = [
+    'AbilityHandMain.cpp',
+    'AbilityHandData.cpp',
+
+    'ability_hand/src/api.cpp',
+    'ability_hand/src/hand.cpp',
+    'ability_hand/src/linux_serial.cpp',
+    'ability_hand/src/parser.cpp',
+    'ability_hand/src/ppp.cpp',
+    'ability_hand/src/serial_helper.cpp',
+    'ability_hand/src/wrapper.cpp',
+
+    # Only include this on Windows builds
+    # 'ability_hand/src/winserial.cpp',
+]
+
+daemon_env.Program(
+    target='AbilityHandMain',
+    source=daemon_sources,
+    CPPPATH=[
+        '.',
+        'service',
+        'ability_hand/include',
+    ],
+    LIBPATH=[
+        '.',
+        'service',
+    ],
+    LIBS=[
+        'service',
+        'pthread',
+        'rt',
+        'm',
+    ] + env['LIBS']
+)

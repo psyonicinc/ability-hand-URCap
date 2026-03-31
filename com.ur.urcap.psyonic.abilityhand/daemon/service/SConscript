@@ -1,0 +1,18 @@
+Import('env')
+
+service_env = env.Clone()
+
+service_sources = [
+    'AbyssServer.cpp',
+    'XMLRPCMethods.cpp',
+]
+
+service_env.StaticLibrary(
+    target='service',
+    source=service_sources,
+    CPPPATH=[
+        '.',
+        '..',
+        '../ability_hand/include',
+    ]
+)

@@ -6,6 +6,7 @@
         <format>tar.gz</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
+
     <fileSets>
         <fileSet>
             <directory>.</directory>
@@ -15,14 +16,16 @@
             </includes>
             <useDefaultExcludes>true</useDefaultExcludes>
         </fileSet>
+
         <fileSet>
             <directory>src</directory>
             <useDefaultExcludes>true</useDefaultExcludes>
             <excludes>
-                <exclude>main/resources/com/ur/urcap/examples/mydaemonswing/impl/daemon/.gitignore</exclude>
-                <exclude>main/resources/com/ur/urcap/examples/mydaemonswing/impl/daemon/HelloWorld</exclude>
+                <exclude>main/resources/com/ur/urcap/psyonic/abilityhand/impl/daemon/.gitignore</exclude>
+                <exclude>main/resources/com/ur/urcap/psyonic/abilityhand/impl/daemon/AbilityHandMain</exclude>
             </excludes>
         </fileSet>
+
         <fileSet>
             <directory>daemon</directory>
             <includes>
@@ -30,9 +33,20 @@
                 <include>*.cpp</include>
                 <include>SConscript</include>
                 <include>SConstruct</include>
+
                 <include>service/*.hpp</include>
                 <include>service/*.cpp</include>
                 <include>service/SConscript</include>
+
+                <include>ability_hand/include/*.h</include>
+                <include>ability_hand/include/*.hpp</include>
+                <include>ability_hand/include/*.c</include>
+                <include>ability_hand/include/*.cpp</include>
+
+                <include>ability_hand/src/*.h</include>
+                <include>ability_hand/src/*.hpp</include>
+                <include>ability_hand/src/*.c</include>
+                <include>ability_hand/src/*.cpp</include>
             </includes>
         </fileSet>
     </fileSets>

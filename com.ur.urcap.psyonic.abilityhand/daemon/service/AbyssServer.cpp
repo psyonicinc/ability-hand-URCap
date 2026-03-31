@@ -17,6 +17,8 @@ AbyssServer::AbyssServer(AbilityHandData* data) :
 {
   // Add all adapters defined in XMLRPCMethods here
   serviceRegistry.addMethod("isReachable", new IsReachable(data));
+  serviceRegistry.addMethod("startPositionThread", new startPositionThread(data));
+  serviceRegistry.addMethod("stopPositionThread", new stopPositionThread(data));
   serviceRegistry.addMethod("setPosition", new setPosition(data));
   serviceRegistry.addMethod("setTorque", new setTorque(data));
   serviceRegistry.addMethod("setDuty", new setDuty(data));

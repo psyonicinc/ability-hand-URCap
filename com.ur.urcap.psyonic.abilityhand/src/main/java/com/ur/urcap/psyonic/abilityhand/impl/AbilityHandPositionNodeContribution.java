@@ -66,7 +66,11 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                 getPosition(PINKY_KEY),
                 getPosition(THUMB_FLEXOR_KEY),
                 getPosition(THUMB_OPPOSITION_KEY)
+
         );
+        if (liveTracking) {
+            updateHandPosition();
+        }
     }
 
     @Override

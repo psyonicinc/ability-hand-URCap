@@ -95,6 +95,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
                 if (liveTrackingCheckbox != null && liveTrackingCheckbox.isSelected()) {
                     provider.get().updateHandPosition();
                 }
+
             }
         });
 
@@ -124,6 +125,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         pinkySlider.setValue(pinky);
         thumbFlexorSlider.setValue(thumbFlexor);
         thumbOppositionSlider.setValue(thumbOpposition);
+
     }
 
     public void showError(String message) {

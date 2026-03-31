@@ -21,6 +21,24 @@ private:
     AbilityHandData* data;
 };
 
+class startPositionThread : public xmlrpc_c::method {
+  public:
+    startPositionThread(AbilityHandData* data);
+    void execute(xmlrpc_c::paramList const &paramList, xmlrpc_c::value *const retvalP);
+  private:
+    startPositionThread();
+    AbilityHandData* data;
+};
+
+class stopPositionThread : public xmlrpc_c::method {
+  public:
+    stopPositionThread(AbilityHandData* data);
+    void execute(xmlrpc_c::paramList const &paramList, xmlrpc_c::value *const retvalP);
+  private:
+    stopPositionThread();
+    AbilityHandData* data;
+};
+
 class setPosition: public xmlrpc_c::method {
   public:
     setPosition(AbilityHandData* data);

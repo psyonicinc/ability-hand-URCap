@@ -14,17 +14,49 @@ IsReachable::IsReachable(AbilityHandData* data) : data(data)
                               // http://xmlrpc-c.sourceforge.net/doc/libxmlrpc_server++.html#howto
 }
 
+
 void IsReachable::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* const retvalP) {
     paramList.verifyEnd(0);
     bool result = data->isReachable();
     *retvalP = xmlrpc_c::value_boolean(result);
 }
 
+
+startPositionThread::startPositionThread(AbilityHandData* data) : data(data)
+{
+  this->_signature = "b:";
+  this->_help = "Starts position thread";
+}
+
+
+void startPositionThread::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* const retvalP) {
+  paramList.verifyEnd(0);
+  bool result = data->startPositionThread();
+  *retvalP = xmlrpc_c::value_boolean(result);
+}
+
+
+stopPositionThread::stopPositionThread(AbilityHandData* data) : data(data)
+{
+  this->_signature = "b:";
+  this->_help = "stops position thread";
+}
+
+
+void stopPositionThread::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* const retvalP) {
+  paramList.verifyEnd(0);
+  bool result = data->stopPositionThread();
+  *retvalP = xmlrpc_c::value_boolean(result);
+}
+
+
+
 setPosition::setPosition(AbilityHandData* data) : data(data)
 {
   this->_signature = "b:A"; // RPC method signature, which is not mandatory for basic operation, see http://xmlrpc-c.sourceforge.net/doc/libxmlrpc_server++.html#howto
   this->_help = "Set hand joint positions";
 }
+
 
 void setPosition::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* const retvalP) {
   
@@ -51,11 +83,13 @@ void setPosition::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value*
 }
 
 
+
 setTorque::setTorque(AbilityHandData* data) : data(data)
 {
   this->_signature = "b:A"; // RPC method signature, which is not mandatory for basic operation, see http://xmlrpc-c.sourceforge.net/doc/libxmlrpc_server++.html#howto
   this->_help = "Set hand joint torques";
 }
+
 
 void setTorque::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* const retvalP) {
   
@@ -87,6 +121,8 @@ setDuty::setDuty(AbilityHandData* data) : data(data)
   this->_signature = "b:A"; // RPC method signature, which is not mandatory for basic operation, see http://xmlrpc-c.sourceforge.net/doc/libxmlrpc_server++.html#howto
   this->_help = "Set hand joint duty";
 }
+
+
 
 void setDuty::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* const retvalP) {
   

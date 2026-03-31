@@ -78,8 +78,27 @@ public class XmlRpcMyDaemonInterface {
 		return isDaemonReachable.get();
 	}
 
+	public boolean startPositionThread() {
+		try {
+		return processBoolean(client.execute("startPositionThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean stopPositionThread() {
+		try {
+		return processBoolean(client.execute("stopPositionThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public boolean setPosition(List<Double> cmd) {
 		try {
+			cmd.set(5, -cmd.get(5));
 			return processBoolean(client.execute("setPosition", Collections.singletonList(cmd)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -89,7 +108,8 @@ public class XmlRpcMyDaemonInterface {
 
 	public boolean setTorque(List<Double> cmd) {
 		try {
-		return processBoolean(client.execute("setTorque", Collections.singletonList(cmd)));
+			// cmd.set(5, -list.get(5));
+			return processBoolean(client.execute("setTorque", Collections.singletonList(cmd)));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -98,7 +118,8 @@ public class XmlRpcMyDaemonInterface {
 
 	public boolean setDuty(List<Double> cmd) {
 		try {
-		return processBoolean(client.execute("setDuty", Collections.singletonList(cmd)));
+			// cmd.set(5, -list.get(5));
+			return processBoolean(client.execute("setDuty", Collections.singletonList(cmd)));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

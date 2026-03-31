@@ -175,7 +175,4 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
             }
     }
 
-    // private String getServerUrl() {
-    //     return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
-    // }
 }

@@ -107,10 +107,12 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		// Note, alternatively plain sockets can be used.
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-		writer.appendLine("ah_daemon.stopGripThread()");
+		// writer.appendLine("ah_daemon.stopGripThread()");
+		writer.appendLine("ah_daemon.stopPositionThread()"); ////////////
 		writer.appendLine("ah_daemon.startGripThread()");
-        writer.appendLine("ah_daemon.set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+        writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
 		writer.appendLine("ah_daemon.stopGripThread()");
+		writer.appendLine("ah_daemon.startPositionThread()"); ///////////
 
 	}
 

@@ -80,8 +80,10 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	@Override
 	public void generateScript(ScriptWriter writer) {
 		// Assign XMLRPC_VARIABLE
-		// writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"http://127.0.0.1:" + PORT + "/RPC2\")");
 		writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"" + XmlRpcMyDaemonInterface.getDaemonUrl() + "\")");
+		writer.appendLine("ah_daemon.stopGripThread()");
+		writer.appendLine("ah_daemon.stopPositionThread()");
+		writer.appendLine("ah_daemon.startPositionThread()");
 	}
 
 	private void updateUI() {

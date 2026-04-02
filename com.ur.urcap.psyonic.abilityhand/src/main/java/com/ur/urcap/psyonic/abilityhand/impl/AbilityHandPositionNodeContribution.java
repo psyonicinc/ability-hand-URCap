@@ -106,8 +106,8 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         MyDaemonInstallationNodeContribution install = getInstallation();
         writer.assign("ah_daemon", install.getXMLRPCVariable());
 
-        writer.appendLine("ah_daemon.stopPositionThread()");
-        writer.appendLine("ah_daemon.startPositionThread()");
+        // writer.appendLine("ah_daemon.stopPositionThread()"); /////////////
+        // writer.appendLine("ah_daemon.startPositionThread()"); ////////////
         writer.appendLine(
         "ah_daemon.setPosition([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -117,7 +117,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         (double) getPosition(THUMB_FLEXOR_KEY) + "," +
         (double) getPosition(THUMB_OPPOSITION_KEY) +
         "])" );
-        writer.appendLine("ah_daemon.stopPositionThread()");
+        // writer.appendLine("ah_daemon.stopPositionThread()"); ////////////
 
     }
 

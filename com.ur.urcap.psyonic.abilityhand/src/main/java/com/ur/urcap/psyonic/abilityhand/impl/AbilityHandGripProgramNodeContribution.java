@@ -62,6 +62,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
 		if (getInstallation().isDaemonEnabled()) {
         try {
+		getDaemonInterface().stopGripThread();
         getDaemonInterface().startGripThread();
         } catch (Exception e) {
             view.showError("Failed to start grip thread");
@@ -97,6 +98,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		// Note, alternatively plain sockets can be used.
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
+		writer.appendLine("ah_daemon.stopGripThread()");
 		writer.appendLine("ah_daemon.startGripThread()");
         writer.appendLine("ah_daemon.set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
 		writer.appendLine("ah_daemon.stopGripThread()");

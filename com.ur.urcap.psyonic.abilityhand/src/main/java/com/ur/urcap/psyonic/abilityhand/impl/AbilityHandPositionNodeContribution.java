@@ -55,6 +55,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
         if (getInstallation().isDaemonEnabled()) {
         try {
+        getDaemonInterface().stopPositionThread();
         getDaemonInterface().startPositionThread();
         } catch (Exception e) {
             view.showError("Failed to start position thread");
@@ -88,6 +89,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         MyDaemonInstallationNodeContribution install = getInstallation();
         writer.assign("ah_daemon", install.getXMLRPCVariable());
 
+        writer.appendLine("ah_daemon.stopPositionThread()");
         writer.appendLine("ah_daemon.startPositionThread()");
         writer.appendLine(
         "ah_daemon.setPosition([" +

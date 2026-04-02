@@ -61,14 +61,23 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		view.updateSliders(getSpeed());
 
 		if (getInstallation().isDaemonEnabled()) {
-        try {
-		getDaemonInterface().stopGripThread();
-        getDaemonInterface().startGripThread();
-        } catch (Exception e) {
-            view.showError("Failed to start grip thread");
-            e.printStackTrace();
-            }
-        }
+			try {
+			getDaemonInterface().stopGripThread();
+			getDaemonInterface().startGripThread();
+			} catch (Exception e) {
+				view.showError("Failed to start grip thread");
+				e.printStackTrace();
+				}
+		
+			if (liveTracking) {
+				try {
+				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				} catch (Exception e) {
+					view.showError("Failed to set grip");
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 
@@ -135,12 +144,14 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 			} catch (Exception e) {
 				System.err.println("Could not set grasp selection: " + e.getMessage());
 			}
-			try {
-				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
-				} catch (Exception e) {
-					view.showError("Failed to update hand grip");
-					e.printStackTrace();
-					}
+			if (liveTracking) {
+				try {
+					getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+					} catch (Exception e) {
+						view.showError("Failed to update hand grip");
+						e.printStackTrace();
+						}
+			}
 		}
 	}
 

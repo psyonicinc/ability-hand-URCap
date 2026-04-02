@@ -54,15 +54,32 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         );
 
         if (getInstallation().isDaemonEnabled()) {
-        try {
-        getDaemonInterface().stopPositionThread();
-        getDaemonInterface().startPositionThread();
-        } catch (Exception e) {
-            view.showError("Failed to start position thread");
-            e.printStackTrace();
+            try {
+            getDaemonInterface().stopPositionThread();
+            getDaemonInterface().startPositionThread();
+            } catch (Exception e) {
+                view.showError("Failed to start position thread");
+                e.printStackTrace();
+                }
+        
+            if (liveTracking) {
+                    try {
+                        List<Double> cmd = Arrays.asList(
+                        (double) getPosition(INDEX_KEY),
+                        (double) getPosition(MIDDLE_KEY),
+                        (double) getPosition(RING_KEY),
+                        (double) getPosition(PINKY_KEY),
+                        (double) getPosition(THUMB_FLEXOR_KEY),
+                        (double) getPosition(THUMB_OPPOSITION_KEY)
+                        );
+                        getDaemonInterface().setPosition(cmd);
+                    } catch (Exception e) {
+                        view.showError("Failed to set hand position");
+                        e.printStackTrace();
+                    }
+                }
             }
         }
-    }
 
     @Override
     public void closeView() {

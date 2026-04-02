@@ -14,7 +14,9 @@ AHWrapper AbilityHandData::wrapper = AHWrapper(0x50, 921600);
 
 
 AbilityHandData::AbilityHandData() {
-  m_curr_cmd = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+  m_curr_cmd = {30.0, 30.0, 30.0, 30.0, 30.0, 0.0};
+  m_curr_grip = 0;
+  m_curr_speed = 255;
   wrapper.connect("");
   //init mutex
   pthread_mutex_init(&mutex, NULL);
@@ -80,6 +82,7 @@ bool AbilityHandData::stopPositionThread() {
 
   p_running = false;
   //join thread?
+  local_cmd =
   pthread_join(pos_thread, NULL);
   return true;
 }
@@ -98,9 +101,9 @@ bool AbilityHandData::stopGripThread() {
 
 void AbilityHandData::pushPosition() {
 
-  while (p_running) {
+  std::array<float, 6> local_cmd;
 
-    std::array<float, 6> local_cmd;
+  while (p_running) {
 
     pthread_mutex_lock(&mutex);
     local_cmd = m_curr_cmd;
@@ -114,10 +117,10 @@ void AbilityHandData::pushPosition() {
 
 void AbilityHandData::pushGrip() {
 
-  while (g_running) {
+  uint8_t local_grip = 0;
+  uint8_t local_speed = 255;
 
-    uint8_t local_grip;
-    uint8_t local_speed;
+  while (g_running) {
 
     pthread_mutex_lock(&mutex);
     local_grip = m_curr_grip;

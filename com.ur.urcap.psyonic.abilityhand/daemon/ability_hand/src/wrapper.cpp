@@ -79,3 +79,23 @@ int AHWrapper::read_write_once(const std::array<float, 6> &cmd_values,
 
   return 0;
 }
+
+int AHWrapper::read_write_once(const uint8_t &cmd_grip, const uint8_t &speed) {
+  m_buffer_idx = build_grip_msg(cmd_grip, speed, m_buffer, hand.address);  
+
+  m_stuffed_idx = ppp_stuff(m_buffer.data(), m_buffer_idx,
+                            m_stuffed_buffer.data(), STUFFED_BUFFER_SIZE);
+  serial_write(m_stuffed_buffer.data(), m_stuffed_idx);
+  ++n_writes; // Can't determine if write fails or succeeds
+
+  int unstuffed_bytes_read =
+      read_until(m_stuffed_buffer.data(), m_buffer.data(), STUFFED_BUFFER_SIZE,
+                 BUFFER_SIZE);
+  if (unstuffed_bytes_read > 0) {
+    // Response received, unstuffed and passed checksum
+    ++n_reads;
+  }
+
+  return 0;
+  
+}

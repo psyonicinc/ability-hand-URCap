@@ -22,7 +22,11 @@ public:
   int connect(const char* port);
   int read_write_once(const std::array<float, 6> &cmd_values,
                       const Command &cmd, const uint8_t &reply_mode);
+  
+  int read_write_once(const uint8_t &cmd_grip, const uint8_t &speed);
+
   Hand hand;
+  
   size_t n_reads = 0;
   size_t n_writes = 0;
 

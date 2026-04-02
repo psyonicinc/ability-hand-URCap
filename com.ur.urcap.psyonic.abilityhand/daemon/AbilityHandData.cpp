@@ -7,7 +7,6 @@
 #include "wrapper.h"
 #include "AbilityHandData.hpp"
 
-// #include <sstream>
 
 using namespace std;
 
@@ -23,6 +22,7 @@ AbilityHandData::AbilityHandData() {
 
 AbilityHandData::~AbilityHandData() {
   AbilityHandData::stopPositionThread();
+  AbilityHandData::stopGripThread();
   pthread_mutex_destroy(&mutex);
 }
 
@@ -30,22 +30,43 @@ bool AbilityHandData::isReachable() {
     return true;
 }
 
-static void* threadEntry(void* arg) {
+static void* threadEntryPos(void* arg) {
   AbilityHandData* self = static_cast<AbilityHandData*>(arg);
   self->pushPosition();
   return NULL;
 }
 
+static void* threadEntryGrip(void* arg) {
+  AbilityHandData* self = static_cast<AbilityHandData*>(arg);
+  self->pushGrip();
+  return NULL;
+}
+
 
 bool AbilityHandData::startPositionThread() {
-  if (running) {
+  if (p_running || g_running) {
         return false;
     }
 
-  running = true;
+  p_running = true;
   //start thread
-  if (pthread_create(&pos_thread, NULL, threadEntry, this) != 0) {
-    running = false;
+  if (pthread_create(&pos_thread, NULL, threadEntryPos, this) != 0) {
+    p_running = false;
+    return false;
+  }
+
+  return true;
+}
+
+bool AbilityHandData::startGripThread() {
+  if (g_running || p_running) {
+        return false;
+    }
+
+  g_running = true;
+  //start thread
+  if (pthread_create(&grip_thread, NULL, threadEntryGrip, this) != 0) {
+    g_running = false;
     return false;
   }
 
@@ -53,45 +74,79 @@ bool AbilityHandData::startPositionThread() {
 }
 
 bool AbilityHandData::stopPositionThread() {
-  if (!running) {
+  if (!p_running) {
         return false;
     }
 
-  running = false;
+  p_running = false;
   //join thread?
   pthread_join(pos_thread, NULL);
+  return true;
+}
+
+bool AbilityHandData::stopGripThread() {
+  if (!g_running) {
+        return false;
+    }
+
+  g_running = false;
+  //join thread?
+  pthread_join(grip_thread, NULL);
   return true;
 }
 
 
 void AbilityHandData::pushPosition() {
 
-  while (running) {
+  while (p_running) {
 
     std::array<float, 6> local_cmd;
 
     pthread_mutex_lock(&mutex);
     local_cmd = m_curr_cmd;
-    wrapper.read_write_once(m_curr_cmd, POSITION, 0);
+    wrapper.read_write_once(local_cmd, POSITION, 0);
     pthread_mutex_unlock(&mutex);
 
     //add sleep to not allow race conditions
-    usleep(3000); //should be 3 micro seconds (~3 cycles at br?)
+    usleep(3000); //should be 3 milliseconds
+  }
+}
+
+void AbilityHandData::pushGrip() {
+
+  while (g_running) {
+
+    uint8_t local_grip;
+    uint8_t local_speed;
+
+    pthread_mutex_lock(&mutex);
+    local_grip = m_curr_grip;
+    local_speed = m_curr_speed;
+    wrapper.read_write_once(local_grip, local_speed);
+    pthread_mutex_unlock(&mutex);
+
+    //add sleep to not allow race conditions
+    usleep(3000); //should be 3 milliseconds
   }
 }
 
 bool AbilityHandData::setPosition(std::array<float, 6> cmd) {
   //with mutex:
-    pthread_mutex_lock(&mutex);
-    m_curr_cmd = cmd;
-    pthread_mutex_unlock(&mutex);
+  pthread_mutex_lock(&mutex);
+  m_curr_cmd = cmd;
+  pthread_mutex_unlock(&mutex);
 
   return true;
 }
 
-// bool AbilityHandData::setGrip(uint8_t cmd, uint8_t speed) {
+bool AbilityHandData::setGrip(uint8_t cmd_grip, uint8_t speed) {
+  pthread_mutex_lock(&mutex);
+  m_curr_grip = cmd_grip;
+  m_curr_speed = speed;
+  pthread_mutex_unlock(&mutex);
 
-// }
+  return true;
+}
 
 bool AbilityHandData::setTorque(std::array<float, 6> cmd) {
   for (size_t i = 0; i < 2; ++i) {

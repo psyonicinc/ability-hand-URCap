@@ -39,12 +39,39 @@ class stopPositionThread : public xmlrpc_c::method {
     AbilityHandData* data;
 };
 
+class startGripThread : public xmlrpc_c::method {
+  public:
+    startGripThread(AbilityHandData* data);
+    void execute(xmlrpc_c::paramList const &paramList, xmlrpc_c::value *const retvalP);
+  private:
+    startGripThread();
+    AbilityHandData* data;
+};
+
+class stopGripThread : public xmlrpc_c::method {
+  public:
+    stopGripThread(AbilityHandData* data);
+    void execute(xmlrpc_c::paramList const &paramList, xmlrpc_c::value *const retvalP);
+  private:
+    stopGripThread();
+    AbilityHandData* data;
+};
+
 class setPosition: public xmlrpc_c::method {
   public:
     setPosition(AbilityHandData* data);
     void execute(xmlrpc_c::paramList const &paramList, xmlrpc_c::value *const retvalP);
   private:
     setPosition(); // Hereby disabled
+    AbilityHandData* data;
+};
+
+class setGrip: public xmlrpc_c::method {
+  public:
+    setGrip(AbilityHandData* data);
+    void execute(xmlrpc_c::paramList const &paramList, xmlrpc_c::value *const retvalP);
+  private:
+    setGrip(); // Hereby disabled
     AbilityHandData* data;
 };
 

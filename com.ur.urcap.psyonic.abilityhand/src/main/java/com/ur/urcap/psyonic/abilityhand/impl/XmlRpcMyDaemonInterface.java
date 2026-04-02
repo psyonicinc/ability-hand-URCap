@@ -87,9 +87,27 @@ public class XmlRpcMyDaemonInterface {
 		}
 	}
 
+	public boolean startGripThread() {
+		try {
+		return processBoolean(client.execute("startGripThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 	public boolean stopPositionThread() {
 		try {
 		return processBoolean(client.execute("stopPositionThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean stopGripThread() {
+		try {
+		return processBoolean(client.execute("stopGripThread", new Object[]{}));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
@@ -100,6 +118,15 @@ public class XmlRpcMyDaemonInterface {
 		try {
 			cmd.set(5, -cmd.get(5));
 			return processBoolean(client.execute("setPosition", Collections.singletonList(cmd)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean setGrip(int grip, int speed) {
+		try {
+			return processBoolean(client.execute("setGrip", new Object[]{grip, speed}));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return false;

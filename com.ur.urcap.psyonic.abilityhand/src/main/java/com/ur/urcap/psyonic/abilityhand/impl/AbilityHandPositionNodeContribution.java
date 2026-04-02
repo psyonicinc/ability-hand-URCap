@@ -61,10 +61,6 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
             e.printStackTrace();
             }
         }
-
-        if (liveTracking) {
-            updateHandPosition();
-        }
     }
 
     @Override

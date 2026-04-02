@@ -33,6 +33,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
     // private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
 	private static final int DEFAULT_SPEED_KEY = 255;
 	private static final String SPEED_KEY = "speed";
+	private boolean liveTracking = false;
 	
 	private final ProgramAPIProvider apiProvider;
 	private final AbilityHandGripProgramNodeView view;
@@ -50,33 +51,34 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		this.model = model;
 
 		this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
-		// establishXmlRpcConnection();
 
 	}
-
-	// private void establishXmlRpcConnection() {
-    //     String serverUrl = getServerUrl();
-    //     try {
-    //         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-    //         config.setServerURL(new URL(serverUrl));
-    //         xmlRpcClient = new XmlRpcClient();
-    //         xmlRpcClient.setConfig(config);
-    //     } catch (MalformedURLException e) {
-    //         // Handle connection error, perhaps log or show in view
-    //         view.showError("Invalid server URL: " + serverUrl);
-    //     }
-    // }
 
 
 	@Override
 	public void openView() {
 		view.updateView();
 		view.updateSliders(getSpeed());
+
+		if (getInstallation().isDaemonEnabled()) {
+        try {
+        getDaemonInterface().startGripThread();
+        } catch (Exception e) {
+            view.showError("Failed to start grip thread");
+            e.printStackTrace();
+            }
+        }
 	}
 
 
 	@Override
 	public void closeView() {
+		try {
+        getDaemonInterface().stopGripThread();
+        } catch (Exception e) {
+            view.showError("Failed to stop grip thread");
+            e.printStackTrace();
+            }
 	}
 
 	@Override
@@ -95,7 +97,9 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		// Note, alternatively plain sockets can be used.
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-        // writer.appendLine("ah_daemon.set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("ah_daemon.startGripThread()");
+        writer.appendLine("ah_daemon.set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("ah_daemon.stopGripThread()");
 
 	}
 
@@ -129,6 +133,12 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 			} catch (Exception e) {
 				System.err.println("Could not set grasp selection: " + e.getMessage());
 			}
+			try {
+				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				} catch (Exception e) {
+					view.showError("Failed to update hand grip");
+					e.printStackTrace();
+					}
 		}
 	}
 
@@ -156,8 +166,24 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
         return model.get(SPEED_KEY, DEFAULT_SPEED_KEY);
     }
 
-    // private String getServerUrl() {
-    //     return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
-    // }
+	public void setLiveTracking(boolean value) {
+        this.liveTracking = value;
+        if (value == true) {
+			try {
+				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				} catch (Exception e) {
+					view.showError("Failed to update hand grip");
+					e.printStackTrace();
+					}
+            }
+    }
+
+	public boolean isLiveTracking() {
+        return liveTracking;
+    }
+
+    private XmlRpcMyDaemonInterface getDaemonInterface() {
+    return getInstallation().getXmlRpcDaemonInterface();
+    }
 
 }

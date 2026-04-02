@@ -40,13 +40,14 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 		this.xmlDaemonInterface = xmlRpcMyDaemonInterface;
 		this.model = model;
 		applyDesiredDaemonStatus();
-		if (isDaemonEnabled()) {
-			try {
-			getXmlRpcDaemonInterface().startPositionThread();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+
+		// if (isDaemonEnabled()) {
+		// 	try {
+		// 	getXmlRpcDaemonInterface().startPositionThread();
+		// 	} catch (Exception e) {
+		// 		e.printStackTrace();
+		// 	}
+		// }
 	}
 
 	@Override
@@ -113,11 +114,7 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	public void onStartClick() {
 		model.set(ENABLED_KEY, true);
 		applyDesiredDaemonStatus();
-		try {
-		getXmlRpcDaemonInterface().startPositionThread();
-		} catch (Exception e) {
-                e.printStackTrace();
-                }
+
 	}
 
 	public void onStopClick() {
@@ -163,7 +160,7 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 		return daemonService.getDaemon().getState();
 	}
 
-	private Boolean isDaemonEnabled() {
+	public Boolean isDaemonEnabled() {
 		return model.get(ENABLED_KEY, true); //This daemon is enabled by default
 	}
 

@@ -17,8 +17,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AbilityHandPositionNodeContribution implements ProgramNodeContribution {
-    // private static final String SERVER_URL_KEY = "server_url";
-    // private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
     private static final String INDEX_KEY = "index";
     private static final String MIDDLE_KEY = "middle";
     private static final String RING_KEY = "ring";
@@ -41,21 +39,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         this.model = model;
         
         this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
-        // establishXmlRpcConnection();
     }
-
-    // private void establishXmlRpcConnection() {
-    //     String serverUrl = getServerUrl();
-    //     try {
-    //         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-    //         config.setServerURL(new URL(serverUrl));
-    //         xmlRpcClient = new XmlRpcClient();
-    //         xmlRpcClient.setConfig(config);
-    //     } catch (MalformedURLException e) {
-    //         // Handle connection error, perhaps log or show in view
-    //         view.showError("Invalid server URL: " + serverUrl);
-    //     }
-    // }
 
     @Override
     public void openView() {
@@ -68,6 +52,16 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                 getPosition(THUMB_OPPOSITION_KEY)
 
         );
+
+        if (getInstallation().isDaemonEnabled()) {
+        try {
+        getDaemonInterface().startPositionThread();
+        } catch (Exception e) {
+            view.showError("Failed to start position thread");
+            e.printStackTrace();
+            }
+        }
+
         if (liveTracking) {
             updateHandPosition();
         }
@@ -75,7 +69,12 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
     @Override
     public void closeView() {
-        // No cleanup needed
+        try {
+        getDaemonInterface().stopPositionThread();
+        } catch (Exception e) {
+            view.showError("Failed to stop position thread");
+            e.printStackTrace();
+            }
     }
 
     @Override
@@ -86,7 +85,6 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     @Override
     public boolean isDefined() {
     	return true;
-//        return xmlRpcClient != null; // Considered defined if connection is established
     }
 
     @Override
@@ -94,7 +92,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         MyDaemonInstallationNodeContribution install = getInstallation();
         writer.assign("ah_daemon", install.getXMLRPCVariable());
 
-        // writer.appendLine("ah_daemon.setPosition([\"" + (double) getPosition(INDEX_KEY) + "\",\"" + (double) getPosition(MIDDLE_KEY) + "\", \"" + (double) getPosition(RING_KEY) + "\", \"" + (double) getPosition(PINKY_KEY) + "\",\"" + (double) getPosition(THUMB_FLEXOR_KEY) + "\",\"" + (double) getPosition(THUMB_OPPOSITION_KEY) + "\"])");
+        writer.appendLine("ah_daemon.startPositionThread()");
         writer.appendLine(
         "ah_daemon.setPosition([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -103,8 +101,9 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         (double) getPosition(PINKY_KEY) + "," +
         (double) getPosition(THUMB_FLEXOR_KEY) + "," +
         (double) getPosition(THUMB_OPPOSITION_KEY) +
-        "])"
-        );
+        "])" );
+        writer.appendLine("ah_daemon.stopPositionThread()");
+
     }
 
     private MyDaemonInstallationNodeContribution getInstallation(){

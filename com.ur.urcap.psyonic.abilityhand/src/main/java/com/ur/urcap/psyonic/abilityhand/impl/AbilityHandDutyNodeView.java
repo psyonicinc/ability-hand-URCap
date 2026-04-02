@@ -94,7 +94,6 @@ public class AbilityHandDutyNodeView implements SwingProgramNodeView<AbilityHand
                 break;
         }
 
-        // box.add(slider);
         return verticalBox;
     }
 

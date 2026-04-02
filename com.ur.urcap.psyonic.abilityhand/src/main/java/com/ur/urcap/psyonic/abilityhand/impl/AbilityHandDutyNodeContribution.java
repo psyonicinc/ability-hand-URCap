@@ -43,19 +43,6 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
         // establishXmlRpcConnection();
     }
 
-    // private void establishXmlRpcConnection() {
-    //     String serverUrl = getServerUrl();
-    //     try {
-    //         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-    //         config.setServerURL(new URL(serverUrl));
-    //         xmlRpcClient = new XmlRpcClient();
-    //         xmlRpcClient.setConfig(config);
-    //     } catch (MalformedURLException e) {
-    //         // Handle connection error, perhaps log or show in view
-    //         view.showError("Invalid server URL: " + serverUrl);
-    //     }
-    // }
-
     @Override
     public void openView() {
         view.updateSliders(
@@ -121,7 +108,4 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
         return model.get(key, DEFAULT_POSITION);
     }
 
-    // private String getServerUrl() {
-    //     return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
-    // }
 }

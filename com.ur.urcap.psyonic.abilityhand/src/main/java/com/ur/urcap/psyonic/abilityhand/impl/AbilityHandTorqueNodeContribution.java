@@ -40,21 +40,7 @@ public class AbilityHandTorqueNodeContribution implements ProgramNodeContributio
         this.model = model;
         
         this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
-        // establishXmlRpcConnection();
     }
-
-    // private void establishXmlRpcConnection() {
-    //     String serverUrl = getServerUrl();
-    //     try {
-    //         XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-    //         config.setServerURL(new URL(serverUrl));
-    //         xmlRpcClient = new XmlRpcClient();
-    //         xmlRpcClient.setConfig(config);
-    //     } catch (MalformedURLException e) {
-    //         // Handle connection error, perhaps log or show in view
-    //         view.showError("Invalid server URL: " + serverUrl);
-    //     }
-    // }
 
     @Override
     public void openView() {
@@ -81,14 +67,12 @@ public class AbilityHandTorqueNodeContribution implements ProgramNodeContributio
     @Override
     public boolean isDefined() {
     	return true;
-//        return xmlRpcClient != null; // Considered defined if connection is established
     }
 
     @Override
     public void generateScript(ScriptWriter writer) {
        MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-        // writer.appendLine("ah_daemon.setTorque([\"" + getPosition(INDEX_KEY) + "\",\"" + getPosition(MIDDLE_KEY) + "\", \"" + getPosition(RING_KEY) + "\", \"" + getPosition(PINKY_KEY) + "\",\"" + getPosition(THUMB_FLEXOR_KEY) + "\",\"" + getPosition(THUMB_OPPOSITION_KEY) + "\"])");
         writer.appendLine(
         "ah_daemon.setTorque([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -121,7 +105,4 @@ public class AbilityHandTorqueNodeContribution implements ProgramNodeContributio
         return model.get(key, DEFAULT_POSITION);
     }
 
-    // private String getServerUrl() {
-    //     return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
-    // }
 }

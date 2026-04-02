@@ -82,7 +82,6 @@ bool AbilityHandData::stopPositionThread() {
 
   p_running = false;
   //join thread?
-  local_cmd =
   pthread_join(pos_thread, NULL);
   return true;
 }

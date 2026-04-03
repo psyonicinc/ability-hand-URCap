@@ -62,10 +62,9 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		view.updateSliders(getSpeed());
 		view.setCheckbox(model.get(CHECKBOX_KEY, false));
 
-		if (getInstallation().isDaemonEnabled() && liveTracking) {
+		if (getInstallation().isDaemonEnabled() && liveTracking && !running_ur) {
 			try {
 				getDaemonInterface().stopPositionThread();
-				getDaemonInterface().stopGripThread();
 				getDaemonInterface().startGripThread();
 				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
 				
@@ -81,7 +80,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
 	@Override
 	public void closeView() {
-		if (liveTracking) {
+		if (liveTracking && !running_ur) {
 			try {
 				getDaemonInterface().stopGripThread();
 			} catch (Exception e) {
@@ -107,12 +106,15 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		// Note, alternatively plain sockets can be used.
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-		// writer.appendLine("ah_daemon.stopGripThread()");
-		writer.appendLine("ah_daemon.stopPositionThread()"); ////////////
+		writer.appendLine("ah_daemon.stopPositionThread()"); 
 		writer.appendLine("ah_daemon.startGripThread()");
+		writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("sleep(0.3)");
+		writer.appendLine("ah_daemon.setGrip(0, 255)");
+		writer.appendLine("sleep(0.3)");
         writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("sleep(2.0)");
 		writer.appendLine("ah_daemon.stopGripThread()");
-		// writer.appendLine("ah_daemon.startPositionThread()"); ///////////
 
 	}
 
@@ -148,6 +150,9 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 			}
 			if (liveTracking) {
 				try {
+					getDaemonInterface().stopPositionThread();
+
+					getDaemonInterface().startGripThread();
 					getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
 					} catch (Exception e) {
 						view.showError("Failed to update hand grip");
@@ -192,8 +197,9 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
 	public void setLiveTracking(boolean value) {
         this.liveTracking = value;
-        if (value == true) {
+        if (liveTracking) {
 			try {
+				getDaemonInterface().stopPositionThread();
 				getDaemonInterface().startGripThread();
 				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
 				} catch (Exception e) {

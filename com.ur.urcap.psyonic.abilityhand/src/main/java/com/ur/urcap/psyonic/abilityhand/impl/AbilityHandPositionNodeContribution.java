@@ -58,7 +58,6 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         if (getInstallation().isDaemonEnabled() && liveTracking) {
             try {
                 getDaemonInterface().stopGripThread();
-                getDaemonInterface().stopPositionThread();
                 getDaemonInterface().startPositionThread();
                 List<Double> cmd = Arrays.asList(
                         (double) getPosition(INDEX_KEY),
@@ -96,8 +95,8 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         MyDaemonInstallationNodeContribution install = getInstallation();
         writer.assign("ah_daemon", install.getXMLRPCVariable());
 
-        // writer.appendLine("ah_daemon.stopPositionThread()"); /////////////
-        writer.appendLine("ah_daemon.startPositionThread()"); ////////////
+        writer.appendLine("ah_daemon.startPositionThread()");
+        
         writer.appendLine(
         "ah_daemon.setPosition([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -107,7 +106,6 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         (double) getPosition(THUMB_FLEXOR_KEY) + "," +
         (double) getPosition(THUMB_OPPOSITION_KEY) +
         "])" );
-        // writer.appendLine("ah_daemon.stopPositionThread()"); ////////////
 
     }
 
@@ -139,7 +137,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
     public void setLiveTracking(boolean value) {
         this.liveTracking = value;
-        if (value == true) {
+        if (liveTracking) {
 
             try {
                     List<Double> cmd = Arrays.asList(
@@ -150,6 +148,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                     (double) getPosition(THUMB_FLEXOR_KEY),
                     (double) getPosition(THUMB_OPPOSITION_KEY)
                     );
+                    getDaemonInterface().stopGripThread();
                     getDaemonInterface().startPositionThread();
                     getDaemonInterface().setPosition(cmd);
                 } catch (Exception e) {

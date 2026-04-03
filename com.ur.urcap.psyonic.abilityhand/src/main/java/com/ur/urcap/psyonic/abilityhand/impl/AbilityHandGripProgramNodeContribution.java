@@ -34,6 +34,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 	private static final int DEFAULT_SPEED_KEY = 255;
 	private static final String SPEED_KEY = "speed";
 	private boolean liveTracking = false;
+	private static final String CHECKBOX_KEY = "false";
 	
 	private final ProgramAPIProvider apiProvider;
 	private final AbilityHandGripProgramNodeView view;
@@ -59,6 +60,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 	public void openView() {
 		view.updateView();
 		view.updateSliders(getSpeed());
+		view.setCheckbox(model.get(CHECKBOX_KEY, false));
 
 		if (getInstallation().isDaemonEnabled() && liveTracking) {
 			try {
@@ -155,6 +157,15 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		}
 	}
 
+	public void onCheckboxChanged(final boolean checked) {
+		undoRedoManager.recordChanges(new UndoableChanges() {
+			@Override
+			public void executeChanges() {
+				model.set(CHECKBOX_KEY, checked);
+			}
+		});
+	}
+
 	public String getSelectedGrasp() {
     try {
         String value = model.get(GRASPKEY, "Open");  // "Open" is now just the default value
@@ -190,9 +201,6 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 					e.printStackTrace();
 					}
             }
-			else {
-				getDaemonInterface().stopGripThread();
-			}
     }
 
 	public boolean isLiveTracking() {

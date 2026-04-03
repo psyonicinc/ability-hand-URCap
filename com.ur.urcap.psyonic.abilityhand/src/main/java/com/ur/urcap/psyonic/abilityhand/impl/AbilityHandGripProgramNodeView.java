@@ -53,6 +53,7 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
         panel.add(liveTrackingCheckbox);
 
         liveTrackingCheckbox.addActionListener(e -> {
+		provider.get().onCheckboxChanged(liveTrackingCheckbox.isSelected());
         provider.get().setLiveTracking(liveTrackingCheckbox.isSelected());
         });
 
@@ -154,6 +155,7 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 	}
 
 
+
 	private Component createHorizontalSpacing() {
 		return Box.createRigidArea(new Dimension(style.getHorizontalSpacing(), 0));
 	}
@@ -169,6 +171,10 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 	public void showError(String message) {
         errorLabel.setText(message);
     }
+
+	public void setCheckbox(boolean checked) {
+		liveTrackingCheckbox.setSelected(checked);
+	}
 
 
 	

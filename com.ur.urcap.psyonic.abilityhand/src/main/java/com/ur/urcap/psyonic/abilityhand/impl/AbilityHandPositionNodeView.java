@@ -55,6 +55,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         panel.add(liveTrackingCheckbox);
 
         liveTrackingCheckbox.addActionListener(e -> {
+        provider.get().onCheckboxChanged(liveTrackingCheckbox.isSelected());
         provider.get().setLiveTracking(liveTrackingCheckbox.isSelected());
         });
 
@@ -127,6 +128,10 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         thumbOppositionSlider.setValue(thumbOpposition);
 
     }
+
+    public void setCheckbox(boolean checked) {
+		liveTrackingCheckbox.setSelected(checked);
+	}
 
     public void showError(String message) {
         errorLabel.setText(message);

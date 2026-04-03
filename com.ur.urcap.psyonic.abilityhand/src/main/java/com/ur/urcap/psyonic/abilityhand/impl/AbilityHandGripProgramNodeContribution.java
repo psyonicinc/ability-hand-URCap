@@ -60,35 +60,33 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		view.updateView();
 		view.updateSliders(getSpeed());
 
-		if (getInstallation().isDaemonEnabled()) {
+		if (getInstallation().isDaemonEnabled() && liveTracking) {
 			try {
-			getDaemonInterface().stopGripThread();
-			getDaemonInterface().startGripThread();
+				getDaemonInterface().stopPositionThread();
+				getDaemonInterface().stopGripThread();
+				getDaemonInterface().startGripThread();
+				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				
+
 			} catch (Exception e) {
-				view.showError("Failed to start grip thread");
+				view.showError("Failed to grip init open_view");
 				e.printStackTrace();
 				}
 		
-			if (liveTracking) {
-				try {
-				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
-				} catch (Exception e) {
-					view.showError("Failed to set grip");
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
 
 	@Override
 	public void closeView() {
-		try {
-        getDaemonInterface().stopGripThread();
-        } catch (Exception e) {
-            view.showError("Failed to stop grip thread");
-            e.printStackTrace();
-            }
+		if (liveTracking) {
+			try {
+				getDaemonInterface().stopGripThread();
+			} catch (Exception e) {
+				view.showError("Failed to stop grip thread close_view");
+				e.printStackTrace();
+				}
+		}
 	}
 
 	@Override
@@ -112,7 +110,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		writer.appendLine("ah_daemon.startGripThread()");
         writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
 		writer.appendLine("ah_daemon.stopGripThread()");
-		writer.appendLine("ah_daemon.startPositionThread()"); ///////////
+		// writer.appendLine("ah_daemon.startPositionThread()"); ///////////
 
 	}
 
@@ -185,12 +183,16 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
         this.liveTracking = value;
         if (value == true) {
 			try {
+				getDaemonInterface().startGripThread();
 				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
 				} catch (Exception e) {
 					view.showError("Failed to update hand grip");
 					e.printStackTrace();
 					}
             }
+			else {
+				getDaemonInterface().stopGripThread();
+			}
     }
 
 	public boolean isLiveTracking() {

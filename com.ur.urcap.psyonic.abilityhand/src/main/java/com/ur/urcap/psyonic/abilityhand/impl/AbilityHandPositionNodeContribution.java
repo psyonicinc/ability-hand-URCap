@@ -53,18 +53,12 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
         );
 
-        if (getInstallation().isDaemonEnabled()) {
+        if (getInstallation().isDaemonEnabled() && liveTracking) {
             try {
-            getDaemonInterface().stopPositionThread();
-            getDaemonInterface().startPositionThread();
-            } catch (Exception e) {
-                view.showError("Failed to start position thread");
-                e.printStackTrace();
-                }
-        
-            if (liveTracking) {
-                    try {
-                        List<Double> cmd = Arrays.asList(
+                getDaemonInterface().stopGripThread();
+                getDaemonInterface().stopPositionThread();
+                getDaemonInterface().startPositionThread();
+                List<Double> cmd = Arrays.asList(
                         (double) getPosition(INDEX_KEY),
                         (double) getPosition(MIDDLE_KEY),
                         (double) getPosition(RING_KEY),
@@ -72,23 +66,17 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                         (double) getPosition(THUMB_FLEXOR_KEY),
                         (double) getPosition(THUMB_OPPOSITION_KEY)
                         );
-                        getDaemonInterface().setPosition(cmd);
-                    } catch (Exception e) {
-                        view.showError("Failed to set hand position");
-                        e.printStackTrace();
-                    }
+                getDaemonInterface().setPosition(cmd);
+
+            } catch (Exception e) {
+                view.showError("Failed to start position thread");
+                e.printStackTrace();
                 }
             }
         }
 
     @Override
     public void closeView() {
-        try {
-        getDaemonInterface().stopPositionThread();
-        } catch (Exception e) {
-            view.showError("Failed to stop position thread");
-            e.printStackTrace();
-            }
     }
 
     @Override
@@ -107,7 +95,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         writer.assign("ah_daemon", install.getXMLRPCVariable());
 
         // writer.appendLine("ah_daemon.stopPositionThread()"); /////////////
-        // writer.appendLine("ah_daemon.startPositionThread()"); ////////////
+        writer.appendLine("ah_daemon.startPositionThread()"); ////////////
         writer.appendLine(
         "ah_daemon.setPosition([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -140,22 +128,24 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     public void setLiveTracking(boolean value) {
         this.liveTracking = value;
         if (value == true) {
-            List<Double> cmd = Arrays.asList(
-            (double) getPosition(INDEX_KEY),
-            (double) getPosition(MIDDLE_KEY),
-            (double) getPosition(RING_KEY),
-            (double) getPosition(PINKY_KEY),
-            (double) getPosition(THUMB_FLEXOR_KEY),
-            (double) getPosition(THUMB_OPPOSITION_KEY)
-            );
 
-        try {
-            getDaemonInterface().setPosition(cmd);
-            } catch (Exception e) {
-                view.showError("Failed to update hand position");
-                e.printStackTrace();
-                }
+            try {
+                    List<Double> cmd = Arrays.asList(
+                    (double) getPosition(INDEX_KEY),
+                    (double) getPosition(MIDDLE_KEY),
+                    (double) getPosition(RING_KEY),
+                    (double) getPosition(PINKY_KEY),
+                    (double) getPosition(THUMB_FLEXOR_KEY),
+                    (double) getPosition(THUMB_OPPOSITION_KEY)
+                    );
+                    getDaemonInterface().startPositionThread();
+                    getDaemonInterface().setPosition(cmd);
+                } catch (Exception e) {
+                    view.showError("Failed to update hand position");
+                    e.printStackTrace();
+                    }
             }
+            
     }
 
     public boolean isLiveTracking() {

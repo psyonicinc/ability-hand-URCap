@@ -62,7 +62,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		view.updateSliders(getSpeed());
 		view.setCheckbox(model.get(CHECKBOX_KEY, false));
 
-		if (getInstallation().isDaemonEnabled() && liveTracking && !running_ur) {
+		if (getInstallation().isDaemonEnabled() && liveTracking) {
 			try {
 				getDaemonInterface().stopPositionThread();
 				getDaemonInterface().startGripThread();
@@ -80,7 +80,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
 	@Override
 	public void closeView() {
-		if (liveTracking && !running_ur) {
+		if (liveTracking) {
 			try {
 				getDaemonInterface().stopGripThread();
 			} catch (Exception e) {

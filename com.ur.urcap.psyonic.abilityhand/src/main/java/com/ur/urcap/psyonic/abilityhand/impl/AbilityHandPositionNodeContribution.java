@@ -107,6 +107,8 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         (double) getPosition(THUMB_OPPOSITION_KEY) +
         "])" );
 
+        writer.appendLine("sleep(0.35)");
+
     }
 
     private MyDaemonInstallationNodeContribution getInstallation(){

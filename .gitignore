@@ -40,6 +40,9 @@ com.ur.urcap.psyonic.abilityhand/daemon/.sconsign.dblite
 # object files
 *.o
 
+# built libs
+*.a
+
 # Target folers
 *target/
 

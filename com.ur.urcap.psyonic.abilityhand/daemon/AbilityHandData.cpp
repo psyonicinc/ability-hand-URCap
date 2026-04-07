@@ -151,18 +151,38 @@ bool AbilityHandData::setGrip(uint8_t cmd_grip, uint8_t speed) {
 }
 
 bool AbilityHandData::setTorque(std::array<float, 6> cmd) {
-  for (size_t i = 0; i < 2; ++i) {
+  if (p_running || g_running) {
+    return false;
+  }
+
+  for (size_t i = 0; i < 100; ++i) {
     wrapper.read_write_once(cmd, CURRENT, 0);
 
   }
+  std::array<float, 6> pos;
+  pos = wrapper.hand.pos;
+  pthread_mutex_lock(&mutex);
+  m_curr_cmd = pos;
+  pthread_mutex_unlock(&mutex);
+
   return true;
 }
 
 bool AbilityHandData::setDuty(std::array<float, 6> cmd) {
-  for (size_t i = 0; i < 2; ++i) {
-    wrapper.read_write_once(cmd, DUTY, 0);
-
+  if (p_running || g_running) {
+    return false;
   }
+
+  for (size_t i = 0; i < 100; ++i) {
+    wrapper.read_write_once(cmd, DUTY, 0);
+    
+  }
+  std::array<float, 6> pos;
+  pos = wrapper.hand.pos;
+  pthread_mutex_lock(&mutex);
+  m_curr_cmd = pos;
+  pthread_mutex_unlock(&mutex);
+
   return true;
 }
 

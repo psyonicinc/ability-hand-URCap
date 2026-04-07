@@ -134,7 +134,7 @@ void setTorque::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* c
     std::vector<xmlrpc_c::value> const elems(arrVal.vectorValueValue());
 
     if (elems.size() != 6) {
-        throw std::runtime_error("setPosition expects an array of 6 doubles");
+        throw std::runtime_error("setTorque expects an array of 6 doubles");
     }
 
     std::array<float, 6> cmd = {
@@ -146,7 +146,7 @@ void setTorque::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* c
         static_cast<float>(xmlrpc_c::value_double(elems[5]))
     };
 
-    bool result = data->setPosition(cmd);
+    bool result = data->setTorque(cmd);
     *retvalP = xmlrpc_c::value_boolean(result);
 }
 
@@ -165,7 +165,7 @@ void setDuty::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* con
     std::vector<xmlrpc_c::value> const elems(arrVal.vectorValueValue());
 
     if (elems.size() != 6) {
-        throw std::runtime_error("setPosition expects an array of 6 doubles");
+        throw std::runtime_error("setDuty expects an array of 6 doubles");
     }
 
     std::array<float, 6> cmd = {
@@ -177,6 +177,6 @@ void setDuty::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* con
         static_cast<float>(xmlrpc_c::value_double(elems[5]))
     };
 
-    bool result = data->setPosition(cmd);
+    bool result = data->setDuty(cmd);
     *retvalP = xmlrpc_c::value_boolean(result);
 }

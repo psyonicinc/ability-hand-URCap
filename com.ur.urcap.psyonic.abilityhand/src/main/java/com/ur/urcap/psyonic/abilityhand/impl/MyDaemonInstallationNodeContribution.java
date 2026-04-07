@@ -124,6 +124,7 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 		applyDesiredDaemonStatus();
 		try {
 		getXmlRpcDaemonInterface().stopPositionThread();
+		getXmlRpcDaemonInterface().stopGripThread();
 		} catch (Exception e) {
                 e.printStackTrace();
                 }

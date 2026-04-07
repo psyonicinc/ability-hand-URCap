@@ -64,10 +64,21 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
 		if (getInstallation().isDaemonEnabled() && liveTracking) {
 			try {
-				getDaemonInterface().stopPositionThread();
-				getDaemonInterface().startGripThread();
-				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				boolean posStatus;
+				posStatus = getDaemonInterface().stopPositionThread();
 				
+				getDaemonInterface().startGripThread();
+					
+				if (!posStatus) {
+					getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				}
+				else {
+					getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+					Thread.sleep(200);
+					getDaemonInterface().setGrip(0, 255);
+					Thread.sleep(200);
+					getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				}
 
 			} catch (Exception e) {
 				view.showError("Failed to grip init open_view");
@@ -106,13 +117,23 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		// Note, alternatively plain sockets can be used.
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-		writer.appendLine("ah_daemon.stopPositionThread()"); 
+		writer.appendLine("posStatus = ah_daemon.stopPositionThread()"); 
 		writer.appendLine("ah_daemon.startGripThread()");
-		writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
-		writer.appendLine("sleep(0.3)");
-		writer.appendLine("ah_daemon.setGrip(0, 255)");
-		writer.appendLine("sleep(0.3)");
-        writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		
+		writer.appendLine("if (posStatus == True):");
+		
+		writer.appendLine("  ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("  sleep(0.3)");
+		writer.appendLine("  ah_daemon.setGrip(0, 255)");
+		writer.appendLine("  sleep(0.3)");
+        writer.appendLine("  ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		
+		writer.appendLine("else:");
+		
+		writer.appendLine("  ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		
+		writer.appendLine("end");
+
 		writer.appendLine("sleep(2.0)");
 		writer.appendLine("ah_daemon.stopGripThread()");
 

@@ -156,8 +156,13 @@ bool AbilityHandData::setTorque(std::array<float, 6> cmd) {
   }
 
   for (size_t i = 0; i < 100; ++i) {
-    wrapper.read_write_once(cmd, CURRENT, 0);
-
+    if (p_running || g_running) {
+      return false;
+    }
+    else {
+      wrapper.read_write_once(cmd, CURRENT, 0);
+    }
+    
   }
   std::array<float, 6> pos;
   pos = wrapper.hand.pos;
@@ -174,7 +179,12 @@ bool AbilityHandData::setDuty(std::array<float, 6> cmd) {
   }
 
   for (size_t i = 0; i < 100; ++i) {
-    wrapper.read_write_once(cmd, DUTY, 0);
+    if (p_running || g_running) {
+      return false;
+    }
+    else {
+      wrapper.read_write_once(cmd, DUTY, 0);
+    }
     
   }
   std::array<float, 6> pos;

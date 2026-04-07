@@ -34,6 +34,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 	private static final int DEFAULT_SPEED_KEY = 255;
 	private static final String SPEED_KEY = "speed";
 	private boolean liveTracking = false;
+	private static final String CHECKBOX_KEY = "false";
 	
 	private final ProgramAPIProvider apiProvider;
 	private final AbilityHandGripProgramNodeView view;
@@ -59,36 +60,34 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 	public void openView() {
 		view.updateView();
 		view.updateSliders(getSpeed());
+		view.setCheckbox(model.get(CHECKBOX_KEY, false));
 
-		if (getInstallation().isDaemonEnabled()) {
+		if (getInstallation().isDaemonEnabled() && liveTracking) {
 			try {
-			getDaemonInterface().stopGripThread();
-			getDaemonInterface().startGripThread();
+				getDaemonInterface().stopPositionThread();
+				getDaemonInterface().startGripThread();
+				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
+				
+
 			} catch (Exception e) {
-				view.showError("Failed to start grip thread");
+				view.showError("Failed to grip init open_view");
 				e.printStackTrace();
 				}
 		
-			if (liveTracking) {
-				try {
-				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
-				} catch (Exception e) {
-					view.showError("Failed to set grip");
-					e.printStackTrace();
-				}
-			}
 		}
 	}
 
 
 	@Override
 	public void closeView() {
-		try {
-        getDaemonInterface().stopGripThread();
-        } catch (Exception e) {
-            view.showError("Failed to stop grip thread");
-            e.printStackTrace();
-            }
+		if (liveTracking) {
+			try {
+				getDaemonInterface().stopGripThread();
+			} catch (Exception e) {
+				view.showError("Failed to stop grip thread close_view");
+				e.printStackTrace();
+				}
+		}
 	}
 
 	@Override
@@ -107,9 +106,14 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		// Note, alternatively plain sockets can be used.
 		MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-		writer.appendLine("ah_daemon.stopGripThread()");
+		writer.appendLine("ah_daemon.stopPositionThread()"); 
 		writer.appendLine("ah_daemon.startGripThread()");
-        writer.appendLine("ah_daemon.set_grip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("sleep(0.3)");
+		writer.appendLine("ah_daemon.setGrip(0, 255)");
+		writer.appendLine("sleep(0.3)");
+        writer.appendLine("ah_daemon.setGrip(" + getSelectedGraspIndex() + ", " + getSpeed() + ")");
+		writer.appendLine("sleep(2.0)");
 		writer.appendLine("ah_daemon.stopGripThread()");
 
 	}
@@ -146,6 +150,9 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 			}
 			if (liveTracking) {
 				try {
+					getDaemonInterface().stopPositionThread();
+
+					getDaemonInterface().startGripThread();
 					getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
 					} catch (Exception e) {
 						view.showError("Failed to update hand grip");
@@ -153,6 +160,15 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 						}
 			}
 		}
+	}
+
+	public void onCheckboxChanged(final boolean checked) {
+		undoRedoManager.recordChanges(new UndoableChanges() {
+			@Override
+			public void executeChanges() {
+				model.set(CHECKBOX_KEY, checked);
+			}
+		});
 	}
 
 	public String getSelectedGrasp() {
@@ -181,8 +197,10 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
 	public void setLiveTracking(boolean value) {
         this.liveTracking = value;
-        if (value == true) {
+        if (liveTracking) {
 			try {
+				getDaemonInterface().stopPositionThread();
+				getDaemonInterface().startGripThread();
 				getDaemonInterface().setGrip(getSelectedGraspIndex(), getSpeed());
 				} catch (Exception e) {
 					view.showError("Failed to update hand grip");

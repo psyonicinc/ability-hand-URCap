@@ -25,6 +25,7 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     private static final String THUMB_OPPOSITION_KEY = "thumb_opposition";
     private static final int DEFAULT_POSITION = 0;
     private boolean liveTracking = false;
+    private static final String CHECKBOX_KEY = "false";
 
     private final ProgramAPIProvider apiProvider;
     private final AbilityHandPositionNodeView view;
@@ -52,19 +53,13 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                 getPosition(THUMB_OPPOSITION_KEY)
 
         );
+        view.setCheckbox(model.get(CHECKBOX_KEY, false));
 
-        if (getInstallation().isDaemonEnabled()) {
+        if (getInstallation().isDaemonEnabled() && liveTracking) {
             try {
-            getDaemonInterface().stopPositionThread();
-            getDaemonInterface().startPositionThread();
-            } catch (Exception e) {
-                view.showError("Failed to start position thread");
-                e.printStackTrace();
-                }
-        
-            if (liveTracking) {
-                    try {
-                        List<Double> cmd = Arrays.asList(
+                getDaemonInterface().stopGripThread();
+                getDaemonInterface().startPositionThread();
+                List<Double> cmd = Arrays.asList(
                         (double) getPosition(INDEX_KEY),
                         (double) getPosition(MIDDLE_KEY),
                         (double) getPosition(RING_KEY),
@@ -72,23 +67,17 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                         (double) getPosition(THUMB_FLEXOR_KEY),
                         (double) getPosition(THUMB_OPPOSITION_KEY)
                         );
-                        getDaemonInterface().setPosition(cmd);
-                    } catch (Exception e) {
-                        view.showError("Failed to set hand position");
-                        e.printStackTrace();
-                    }
+                getDaemonInterface().setPosition(cmd);
+
+            } catch (Exception e) {
+                view.showError("Failed to start position thread");
+                e.printStackTrace();
                 }
             }
         }
 
     @Override
     public void closeView() {
-        try {
-        getDaemonInterface().stopPositionThread();
-        } catch (Exception e) {
-            view.showError("Failed to stop position thread");
-            e.printStackTrace();
-            }
     }
 
     @Override
@@ -106,8 +95,8 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         MyDaemonInstallationNodeContribution install = getInstallation();
         writer.assign("ah_daemon", install.getXMLRPCVariable());
 
-        writer.appendLine("ah_daemon.stopPositionThread()");
         writer.appendLine("ah_daemon.startPositionThread()");
+        
         writer.appendLine(
         "ah_daemon.setPosition([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -117,7 +106,8 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         (double) getPosition(THUMB_FLEXOR_KEY) + "," +
         (double) getPosition(THUMB_OPPOSITION_KEY) +
         "])" );
-        writer.appendLine("ah_daemon.stopPositionThread()");
+
+        writer.appendLine("sleep(0.35)");
 
     }
 
@@ -137,25 +127,38 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
     }
 
+	public void onCheckboxChanged(final boolean checked) {
+		undoRedoManager.recordChanges(new UndoableChanges() {
+			@Override
+			public void executeChanges() {
+				model.set(CHECKBOX_KEY, checked);
+			}
+		});
+	}
+
+
     public void setLiveTracking(boolean value) {
         this.liveTracking = value;
-        if (value == true) {
-            List<Double> cmd = Arrays.asList(
-            (double) getPosition(INDEX_KEY),
-            (double) getPosition(MIDDLE_KEY),
-            (double) getPosition(RING_KEY),
-            (double) getPosition(PINKY_KEY),
-            (double) getPosition(THUMB_FLEXOR_KEY),
-            (double) getPosition(THUMB_OPPOSITION_KEY)
-            );
+        if (liveTracking) {
 
-        try {
-            getDaemonInterface().setPosition(cmd);
-            } catch (Exception e) {
-                view.showError("Failed to update hand position");
-                e.printStackTrace();
-                }
+            try {
+                    List<Double> cmd = Arrays.asList(
+                    (double) getPosition(INDEX_KEY),
+                    (double) getPosition(MIDDLE_KEY),
+                    (double) getPosition(RING_KEY),
+                    (double) getPosition(PINKY_KEY),
+                    (double) getPosition(THUMB_FLEXOR_KEY),
+                    (double) getPosition(THUMB_OPPOSITION_KEY)
+                    );
+                    getDaemonInterface().stopGripThread();
+                    getDaemonInterface().startPositionThread();
+                    getDaemonInterface().setPosition(cmd);
+                } catch (Exception e) {
+                    view.showError("Failed to update hand position");
+                    e.printStackTrace();
+                    }
             }
+            
     }
 
     public boolean isLiveTracking() {
@@ -172,21 +175,23 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
     public void updateHandPosition() {
 
-        List<Double> cmd = Arrays.asList(
-        (double) getPosition(INDEX_KEY),
-        (double) getPosition(MIDDLE_KEY),
-        (double) getPosition(RING_KEY),
-        (double) getPosition(PINKY_KEY),
-        (double) getPosition(THUMB_FLEXOR_KEY),
-        (double) getPosition(THUMB_OPPOSITION_KEY)
-        );
+        if (liveTracking) {
 
-    try {
-        getDaemonInterface().setPosition(cmd);
-        } catch (Exception e) {
-            view.showError("Failed to update hand position");
-            e.printStackTrace();
+            try {
+                List<Double> cmd = Arrays.asList(
+                (double) getPosition(INDEX_KEY),
+                (double) getPosition(MIDDLE_KEY),
+                (double) getPosition(RING_KEY),
+                (double) getPosition(PINKY_KEY),
+                (double) getPosition(THUMB_FLEXOR_KEY),
+                (double) getPosition(THUMB_OPPOSITION_KEY)
+                );
+                getDaemonInterface().setPosition(cmd);
+            } catch (Exception e) {
+                view.showError("Failed to update hand position");
+                e.printStackTrace();
             }
+        }
     }
 
 }

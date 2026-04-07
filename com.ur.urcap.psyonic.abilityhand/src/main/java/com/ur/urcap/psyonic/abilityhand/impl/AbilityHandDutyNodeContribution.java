@@ -75,7 +75,10 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
     public void generateScript(ScriptWriter writer) {
         MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
-        // writer.appendLine("ah_daemon.set_duty([\"" + getPosition(INDEX_KEY) + "\",\"" + getPosition(MIDDLE_KEY) + "\", \"" + getPosition(RING_KEY) + "\", \"" + getPosition(PINKY_KEY) + "\",\"" + getPosition(THUMB_FLEXOR_KEY) + "\",\"" + getPosition(THUMB_OPPOSITION_KEY) + "\"])");
+        
+        writer.appendLine("ah_daemon.stopPositionThread()");
+        writer.appendLine("ah_daemon.stopGripThread()");
+
         writer.appendLine(
         "ah_daemon.setDuty([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -86,6 +89,9 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
         (double) getPosition(THUMB_OPPOSITION_KEY) +
         "])"
         );
+
+        writer.appendLine("ah_daemon.startPositionThread()");
+        
     }
 
     private MyDaemonInstallationNodeContribution getInstallation(){

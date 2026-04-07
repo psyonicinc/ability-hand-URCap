@@ -73,6 +73,10 @@ public class AbilityHandTorqueNodeContribution implements ProgramNodeContributio
     public void generateScript(ScriptWriter writer) {
        MyDaemonInstallationNodeContribution install = getInstallation();
 		writer.assign("ah_daemon", install.getXMLRPCVariable());
+        
+        writer.appendLine("ah_daemon.stopPositionThread()");
+        writer.appendLine("ah_daemon.stopGripThread()");
+        
         writer.appendLine(
         "ah_daemon.setTorque([" +
         (double) getPosition(INDEX_KEY) + "," +
@@ -83,6 +87,10 @@ public class AbilityHandTorqueNodeContribution implements ProgramNodeContributio
         (double) getPosition(THUMB_OPPOSITION_KEY) +
         "])"
         );
+
+        writer.appendLine("ah_daemon.startPositionThread()");
+        
+
     }
 
     private MyDaemonInstallationNodeContribution getInstallation(){

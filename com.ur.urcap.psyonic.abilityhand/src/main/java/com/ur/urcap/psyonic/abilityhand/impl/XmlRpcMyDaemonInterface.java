@@ -135,7 +135,12 @@ public class XmlRpcMyDaemonInterface {
 
 	public boolean setTorque(List<Double> cmd) {
 		try {
-			// cmd.set(5, -list.get(5));
+			cmd.set(0, 0.1 * cmd.get(0));
+			cmd.set(1, 0.1 * cmd.get(1));
+			cmd.set(2, 0.1 * cmd.get(2));
+			cmd.set(3, 0.1 * cmd.get(3));
+			cmd.set(4, 0.1 * cmd.get(4));
+			cmd.set(5, -0.1 * cmd.get(5));
 			return processBoolean(client.execute("setTorque", Collections.singletonList(cmd)));
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -145,7 +150,7 @@ public class XmlRpcMyDaemonInterface {
 
 	public boolean setDuty(List<Double> cmd) {
 		try {
-			// cmd.set(5, -list.get(5));
+			cmd.set(5, -cmd.get(5));
 			return processBoolean(client.execute("setDuty", Collections.singletonList(cmd)));
 		} catch (Exception e) {
 			e.printStackTrace();

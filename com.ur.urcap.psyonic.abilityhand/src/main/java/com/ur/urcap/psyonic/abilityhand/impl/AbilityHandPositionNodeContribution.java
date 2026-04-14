@@ -14,7 +14,10 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 public class AbilityHandPositionNodeContribution implements ProgramNodeContribution {
     private static final String INDEX_KEY = "index";
@@ -24,6 +27,10 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     private static final String THUMB_FLEXOR_KEY = "thumb_flexor";
     private static final String THUMB_OPPOSITION_KEY = "thumb_opposition";
     private static final int DEFAULT_POSITION = 0;
+    private static String WAYPOINT_NAMES = "waypoint_names";
+    private static String WAYPOINT_PRE = "waypoint_";
+    private static String WAYPOINT_SELECTED = "selected_waypoint";
+
     private boolean liveTracking = false;
     private static final String CHECKBOX_KEY = "false";
 
@@ -192,6 +199,103 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                 e.printStackTrace();
             }
         }
+    }
+
+    public void savePositionPoint() {
+        String input = JOptionPane.showInputDialog(null, "Enter a Name for Hand Waypoint", JOptionPane.PLAIN_MESSAGE);
+        if (input == null || input.trim().isEmpty()) return;
+        final String name = input.trim();
+
+        double[] positions;
+        try {
+            positions = getDaemonInterface().getCurrPosition();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Daemon Call Failed " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        final double[] finalPositions = positions;
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            @Override
+            public void executeChanges() {
+                saveEntry(name, finalPositions);
+                model.set(WAYPOINT_SELECTED, name);
+            }
+        });
+
+        updateView();
+
+    }
+
+    public void onWaypointSelected(String name) {
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            @Override
+            public void executeChanges() {
+                model.set(WAYPOINT_SELECTED, name);
+            }
+        });
+
+        if (view != null) {
+            view.setWaypointDisplay(name, getWaypointPositions(name));
+        }
+    }
+
+    private void saveEntry(String name, double[] positions) {
+                List<String> names = getWaypointNames();
+                if (!names.contains(name)) {
+                    names.add(name);
+                    model.set(WAYPOINT_NAMES, listToString(names));
+                }
+                model.set(WAYPOINT_PRE, arrayToString(positions));
+    }
+
+    private List<String> getWaypointNames() {
+        String raw = model.get(WAYPOINT_NAMES, "");
+        List<String> list = new ArrayList<>();
+        if (!raw.isEmpty()) {
+            for (String s : raw.split(",")) {
+                if (!s.trim().isEmpty()) list.add(s.trim());
+            }
+        }
+        return list;
+    }
+
+    private double[] getWaypointPositions(String name) {
+        String raw = model.get(WAYPOINT_PRE + name, "");
+        if (raw.isEmpty()) return new double[6];
+        String[] parts = raw.split(",");
+        double[] positions = new double[parts.length];
+        for (int i=0; i<parts.length; i++) {
+            positions[i] = Double.parseDouble(parts[i].trim());
+        }
+        return positions;
+    }
+
+    private void updateView() {
+        if (view==null) return;
+        List<String> names = getWaypointNames();
+        String selected = model.get(WAYPOINT_SELECTED, "");
+        view.setDropdownItems(names, selected);
+        if (!selected.isEmpty()) {
+            view.setWaypointDisplay(selected, getWaypointPositions(selected));
+        }
+    }
+
+    private String arrayToString(double[] vals) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < vals.length; i++) {
+            if (i > 0) sb.append(",");
+            sb.append(vals[i]);
+        }
+        return sb.toString();
+    }
+
+    private String listToString(List<String> list) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) sb.append(",");
+            sb.append(list.get(i));
+        }
+        return sb.toString();
     }
 
 }

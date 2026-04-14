@@ -124,6 +124,11 @@ public class XmlRpcMyDaemonInterface {
 		}
 	}
 
+	public double[] getCurrPosition() {
+		double[] results = {0.0, 0.0, 0.0, 0.0, 0.0};
+		return results;
+	}
+
 	public boolean setGrip(int grip, int speed) {
 		try {
 			return processBoolean(client.execute("setGrip", new Object[]{grip, speed}));

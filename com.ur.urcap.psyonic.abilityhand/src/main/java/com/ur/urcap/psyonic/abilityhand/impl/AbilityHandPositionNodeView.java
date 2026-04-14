@@ -5,17 +5,22 @@ import com.ur.urcap.api.contribution.program.swing.SwingProgramNodeView;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AbilityHandPositionNodeView implements SwingProgramNodeView<AbilityHandPositionNodeContribution> {
+
     private JSlider indexSlider;
     private JSlider middleSlider;
     private JSlider ringSlider;
@@ -31,7 +36,14 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
     private JLabel pinkyValueLabel;
     private JLabel thumbValueLabel;
     private JLabel thumbOppValueLabel;
+
+    private JButton savePositionBtn;
+    private JComboBox<String> getPositionBox;
+    private JLabel waypointDisplayLabel;
+
+
     private JLabel errorLabel;
+
 
     @Override
     public void buildUI(JPanel panel, ContributionProvider<AbilityHandPositionNodeContribution> provider) {
@@ -58,6 +70,21 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         provider.get().onCheckboxChanged(liveTrackingCheckbox.isSelected());
         provider.get().setLiveTracking(liveTrackingCheckbox.isSelected());
         });
+
+        savePositionBtn = new JButton("Save Current Position as Waypoint");
+        savePositionBtn.addActionListener(e -> {
+                provider.get().savePositionPoint();
+            });
+
+        panel.add(createVerticalSpacing(10));
+        panel.add(savePositionBtn);
+
+        panel.add(createVerticalSpacing(10));
+        
+        panel.add(createPositionBox(provider));
+
+        waypointDisplayLabel = new JLabel(" ");
+        panel.add(waypointDisplayLabel);
 
         // Error label
         errorLabel = new JLabel();
@@ -128,6 +155,52 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         thumbOppositionSlider.setValue(thumbOpposition);
 
     }
+
+    private JComboBox createPositionBox(final ContributionProvider<AbilityHandPositionNodeContribution> provider) {
+        getPositionBox = new JComboBox<>();
+        getPositionBox.addActionListener(e -> {
+                String selected = (String) getPositionBox.getSelectedItem();
+                if (selected != null) {
+                    provider.get().onWaypointSelected(selected);
+                }
+            });
+        Dimension d = getPositionBox.getPreferredSize();
+        getPositionBox.setPreferredSize(new Dimension(100, d.height));
+        getPositionBox.setMaximumSize(new Dimension(100, 60));
+        getPositionBox.setMinimumSize(new Dimension(100, 60));
+        
+        return getPositionBox;
+    }
+
+    public void setDropdownItems(java.util.List<String> names, String selectedName) {
+        getPositionBox.removeAllItems();
+        for (String name : names) {
+            getPositionBox.addItem(name);
+        }
+        if (selectedName != null && !selectedName.isEmpty()) {
+            getPositionBox.setSelectedItem(selectedName);
+        }
+    }
+
+    public void setWaypointDisplay(String name, double[] positions) {
+        if (name==null || name.isEmpty()) {
+            waypointDisplayLabel.setText(" ");
+        } 
+        else {
+            waypointDisplayLabel.setText(name + ": " + formatWaypoint(positions));
+        }
+    }
+
+    private String formatWaypoint(double[] positions) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i=0; i<positions.length; i++) {
+            if (i>0) sb.append(", ");
+            sb.append(String.format("%.2f", positions[i]));
+        }
+        return sb.append("]").toString();
+    }
+
+
 
     public void setCheckbox(boolean checked) {
 		liveTrackingCheckbox.setSelected(checked);

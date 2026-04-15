@@ -206,14 +206,14 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         if (input == null || input.trim().isEmpty()) return;
         final String name = input.trim();
 
-        double[] positions;
+        int[] positions;
         try {
             positions = getDaemonInterface().getCurrPosition();
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Daemon Call Failed " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        final double[] finalPositions = positions;
+        final int[] finalPositions = positions;
         undoRedoManager.recordChanges(new UndoableChanges() {
             @Override
             public void executeChanges() {
@@ -231,21 +231,48 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
             @Override
             public void executeChanges() {
                 model.set(WAYPOINT_SELECTED, name);
+                
             }
         });
 
         if (view != null) {
-            view.setWaypointDisplay(name, getWaypointPositions(name));
+            int[] positions = getWaypointPositions(name);
+            view.setWaypointDisplay(name, positions);
+            updatePosition("index", (int) positions[0]);
+            updatePosition("middle", (int) positions[1]);
+            updatePosition("ring", (int) positions[2]);
+            updatePosition("pinky", (int) positions[3]);
+            updatePosition("thumb_flexor", (int) positions[4]);
+            updatePosition("thumb_opposition", (int) -positions[5]);
+            view.updateSliders(getPosition(INDEX_KEY), getPosition(MIDDLE_KEY), getPosition(RING_KEY), getPosition(PINKY_KEY), getPosition(THUMB_FLEXOR_KEY), getPosition(THUMB_OPPOSITION_KEY));
+            
+            if (getDaemonInterface().isDaemonReachable() && liveTracking) {
+                try {
+                    List<Double> cmd = Arrays.asList(
+                        (double) getPosition(INDEX_KEY),
+                        (double) getPosition(MIDDLE_KEY),
+                        (double) getPosition(RING_KEY),
+                        (double) getPosition(PINKY_KEY),
+                        (double) getPosition(THUMB_FLEXOR_KEY),
+                        (double) getPosition(THUMB_OPPOSITION_KEY)
+                        );
+                    getDaemonInterface().setPosition(cmd);
+                } catch (Exception e) {
+                    view.showError("Failed to start waypoint");
+                    e.printStackTrace();
+                }
+                
+            }
         }
     }
 
-    private void saveEntry(String name, double[] positions) {
+    private void saveEntry(String name, int[] positions) {
                 List<String> names = getWaypointNames();
                 if (!names.contains(name)) {
                     names.add(name);
                     model.set(WAYPOINT_NAMES, listToString(names));
                 }
-                model.set(WAYPOINT_PRE, arrayToString(positions));
+                model.set(WAYPOINT_PRE + name, arrayToString(positions));
     }
 
     private List<String> getWaypointNames() {
@@ -259,15 +286,48 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         return list;
     }
 
-    private double[] getWaypointPositions(String name) {
+    private int[] getWaypointPositions(String name) {
         String raw = model.get(WAYPOINT_PRE + name, "");
-        if (raw.isEmpty()) return new double[6];
+        if (raw.isEmpty()) return new int[6];
         String[] parts = raw.split(",");
-        double[] positions = new double[parts.length];
+        int[] positions = new int[parts.length];
         for (int i=0; i<parts.length; i++) {
-            positions[i] = Double.parseDouble(parts[i].trim());
+            positions[i] = Integer.parseInt(parts[i].trim());
         }
         return positions;
+    }
+
+    public void deleteSelectedWaypoint() {
+        String selected = model.get(WAYPOINT_SELECTED, "");
+        if (selected.isEmpty()) return;
+
+        int result = JOptionPane.showConfirmDialog(null,
+            "Delete \"" + selected + "\"?",
+            "Confirm Delete",
+            JOptionPane.YES_NO_OPTION);
+        if (result != JOptionPane.YES_OPTION) return;
+
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            @Override
+            public void executeChanges() {
+                
+                List<String> names = getWaypointNames();
+                names.remove(selected);
+                model.set(WAYPOINT_NAMES, listToString(names));
+
+                
+                model.remove(WAYPOINT_PRE + selected);
+
+                
+                if (names.isEmpty()) {
+                    model.set(WAYPOINT_SELECTED, "");
+                } else {
+                    model.set(WAYPOINT_SELECTED, names.get(0));
+                }
+            }
+        });
+
+        updateView();
     }
 
     private void updateView() {
@@ -276,11 +336,13 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         String selected = model.get(WAYPOINT_SELECTED, "");
         view.setDropdownItems(names, selected);
         if (!selected.isEmpty()) {
-            view.setWaypointDisplay(selected, getWaypointPositions(selected));
+            int [] positions = getWaypointPositions(selected);
+            positions[5] = -positions[5];
+            view.setWaypointDisplay(selected, positions);
         }
     }
 
-    private String arrayToString(double[] vals) {
+    private String arrayToString(int[] vals) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < vals.length; i++) {
             if (i > 0) sb.append(",");

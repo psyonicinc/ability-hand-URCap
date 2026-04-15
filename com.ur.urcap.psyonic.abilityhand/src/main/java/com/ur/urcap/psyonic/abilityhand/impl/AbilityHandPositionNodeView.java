@@ -18,7 +18,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
@@ -44,6 +43,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
     private JLabel thumbOppValueLabel;
 
     private JButton savePositionBtn;
+    private JButton deleteWaypointBtn;
     private JComboBox<String> getPositionBox;
     private JLabel waypointDisplayLabel;
 
@@ -71,7 +71,6 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         JPanel middleRow = new JPanel(new GridBagLayout());
         middleRow.setAlignmentX(Component.LEFT_ALIGNMENT);
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridy = 0;
         gbc.insets = new Insets(0, 0, 0, 8);
         gbc.anchor = GridBagConstraints.NORTHWEST;
         gbc.fill = GridBagConstraints.NONE;
@@ -79,7 +78,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
 
         savePositionBtn = new JButton("Save Current Position as Waypoint");
         savePositionBtn.addActionListener(e -> provider.get().savePositionPoint());
-        gbc.gridx = 0;
+        gbc.gridx = 0; gbc.gridy = 0;
         middleRow.add(savePositionBtn, gbc);
 
         gbc.gridx = 1; gbc.gridy = 0;
@@ -95,6 +94,16 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         waypointDisplayLabel = new JLabel(" ");
         waypointDisplayLabel.setFont(waypointDisplayLabel.getFont().deriveFont(Font.PLAIN, 11f));
         middleRow.add(waypointDisplayLabel, gbc);
+
+        // Delete button under label, right aligned
+        gbc.gridx = 1; gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.anchor = GridBagConstraints.EAST;
+        gbc.insets = new Insets(2, 0, 0, 8);
+        deleteWaypointBtn = new JButton("Delete");
+        deleteWaypointBtn.addActionListener(e -> provider.get().deleteSelectedWaypoint());
+        middleRow.add(deleteWaypointBtn, gbc);
 
         panel.add(middleRow);
 
@@ -208,7 +217,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         }
     }
 
-    public void setWaypointDisplay(String name, double[] positions) {
+    public void setWaypointDisplay(String name, int[] positions) {
         if (name==null || name.isEmpty()) {
             waypointDisplayLabel.setText(" ");
         } 
@@ -217,11 +226,11 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         }
     }
 
-    private String formatWaypoint(double[] positions) {
+    private String formatWaypoint(int[] positions) {
         StringBuilder sb = new StringBuilder("[");
         for (int i=0; i<positions.length; i++) {
             if (i>0) sb.append(", ");
-            sb.append(String.format("%.2f", positions[i]));
+            sb.append(String.format("%d", positions[i]));
         }
         return sb.append("]").toString();
     }

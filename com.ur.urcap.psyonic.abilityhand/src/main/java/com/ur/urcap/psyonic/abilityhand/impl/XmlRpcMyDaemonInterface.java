@@ -124,9 +124,10 @@ public class XmlRpcMyDaemonInterface {
 		}
 	}
 
-	public double[] getCurrPosition() {
-		double[] results = {0.0, 0.0, 0.0, 0.0, 0.0};
-		return results;
+	public int[] getCurrPosition() {
+		double[] results = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+		int[] res_int = {(int) results[0], (int) results[1], (int) results[2], (int) results[3], (int) results[4], (int) results[5]};
+		return res_int;
 	}
 
 	public boolean setGrip(int grip, int speed) {

@@ -19,6 +19,12 @@ import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
+import java.awt.Insets;
+import java.awt.Component;
+import java.awt.Font;
+
 public class AbilityHandPositionNodeView implements SwingProgramNodeView<AbilityHandPositionNodeContribution> {
 
     private JSlider indexSlider;
@@ -51,7 +57,7 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
 
         panel.add(createVerticalSpacing(10));
 
-        // Sliders
+        // ── Sliders ───────────────────────────────────────────────────────────
         panel.add(createSliderBox("Index", provider));
         panel.add(createSliderBox("Middle", provider));
         panel.add(createSliderBox("Ring", provider));
@@ -61,34 +67,54 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
 
         panel.add(createVerticalSpacing(10));
 
-        liveTrackingCheckbox = new JCheckBox("Live Position Tracking");
-        liveTrackingCheckbox.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-        panel.add(liveTrackingCheckbox);
-
-        liveTrackingCheckbox.addActionListener(e -> {
-        provider.get().onCheckboxChanged(liveTrackingCheckbox.isSelected());
-        provider.get().setLiveTracking(liveTrackingCheckbox.isSelected());
-        });
+        // ── Save button + position box side by side ───────────────────────────
+        JPanel middleRow = new JPanel(new GridBagLayout());
+        middleRow.setAlignmentX(Component.LEFT_ALIGNMENT);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 8);
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
 
         savePositionBtn = new JButton("Save Current Position as Waypoint");
-        savePositionBtn.addActionListener(e -> {
-                provider.get().savePositionPoint();
-            });
+        savePositionBtn.addActionListener(e -> provider.get().savePositionPoint());
+        gbc.gridx = 0;
+        middleRow.add(savePositionBtn, gbc);
 
-        panel.add(createVerticalSpacing(10));
-        panel.add(savePositionBtn);
+        gbc.gridx = 1; gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        middleRow.add(createPositionBox(provider), gbc);
 
-        panel.add(createVerticalSpacing(10));
-        
-        panel.add(createPositionBox(provider));
-
+        // Label directly under createPositionBox
+        gbc.gridx = 1; gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(2, 0, 0, 8);
         waypointDisplayLabel = new JLabel(" ");
-        panel.add(waypointDisplayLabel);
+        waypointDisplayLabel.setFont(waypointDisplayLabel.getFont().deriveFont(Font.PLAIN, 11f));
+        middleRow.add(waypointDisplayLabel, gbc);
 
-        // Error label
+        panel.add(middleRow);
+
+        panel.add(createVerticalSpacing(10));
+
+        // ── Checkbox ──────────────────────────────────────────────────────────
+        liveTrackingCheckbox = new JCheckBox("Live Position Tracking");
+        liveTrackingCheckbox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        liveTrackingCheckbox.addActionListener(e -> {
+            provider.get().onCheckboxChanged(liveTrackingCheckbox.isSelected());
+            provider.get().setLiveTracking(liveTrackingCheckbox.isSelected());
+        });
+        panel.add(liveTrackingCheckbox);
+
+        panel.add(createVerticalSpacing(10));
+
+        // ── Error label ───────────────────────────────────────────────────────
         errorLabel = new JLabel();
         errorLabel.setForeground(java.awt.Color.RED);
+        errorLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel.add(errorLabel);
     }
 

@@ -33,8 +33,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
     // private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
 	private static final int DEFAULT_SPEED_KEY = 255;
 	private static final String SPEED_KEY = "speed";
-	private boolean liveTracking = false;
-	private static final String CHECKBOX_KEY = "false";
+
 	
 	private final ProgramAPIProvider apiProvider;
 	private final AbilityHandGripProgramNodeView view;
@@ -60,9 +59,9 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 	public void openView() {
 		view.updateView();
 		view.updateSliders(getSpeed());
-		view.setCheckbox(model.get(CHECKBOX_KEY, false));
+		view.setCheckbox(isLiveTracking());
 
-		if (getInstallation().isDaemonEnabled() && liveTracking) {
+		if (getInstallation().isDaemonEnabled() && isLiveTracking()) {
 			try {
 				boolean posStatus;
 				posStatus = getDaemonInterface().stopPositionThread();
@@ -91,7 +90,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
 	@Override
 	public void closeView() {
-		if (liveTracking) {
+		if (isLiveTracking()) {
 			try {
 				getDaemonInterface().stopGripThread();
 			} catch (Exception e) {
@@ -156,6 +155,10 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 
     }
 
+	public boolean isLiveTracking() {
+        return getInstallation().isLiveTracking();
+    }
+
 
 	public void onGraspSelected(final String grasp, final int grasp_index) {
 		if (model != null && grasp != null) {
@@ -169,7 +172,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 			} catch (Exception e) {
 				System.err.println("Could not set grasp selection: " + e.getMessage());
 			}
-			if (liveTracking) {
+			if (isLiveTracking()) {
 				try {
 					getDaemonInterface().stopPositionThread();
 
@@ -187,7 +190,7 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
 		undoRedoManager.recordChanges(new UndoableChanges() {
 			@Override
 			public void executeChanges() {
-				model.set(CHECKBOX_KEY, checked);
+				getInstallation().setLiveTracking(checked);
 			}
 		});
 	}
@@ -217,8 +220,8 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
     }
 
 	public void setLiveTracking(boolean value) {
-        this.liveTracking = value;
-        if (liveTracking) {
+        getInstallation().setLiveTracking(value);
+        if (isLiveTracking()) {
 			try {
 				getDaemonInterface().stopPositionThread();
 				getDaemonInterface().startGripThread();
@@ -230,9 +233,6 @@ public class AbilityHandGripProgramNodeContribution implements ProgramNodeContri
             }
     }
 
-	public boolean isLiveTracking() {
-        return liveTracking;
-    }
 
     private XmlRpcMyDaemonInterface getDaemonInterface() {
     return getInstallation().getXmlRpcDaemonInterface();

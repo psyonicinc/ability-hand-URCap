@@ -19,7 +19,7 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 
 	private static final String ENABLED_KEY = "enabled";
 
-	private DataModel model;
+	public DataModel model;
 	private final MyDaemonInstallationNodeView view;
 	private final MyDaemonDaemonService daemonService;
 	private XmlRpcMyDaemonInterface xmlDaemonInterface;
@@ -28,6 +28,9 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	private static String XMLRPC_VARIABLE = "ah_daemon";
 	private Timer uiTimer;
 	private boolean pauseTimer = false;
+
+	public static String WAYPOINT_NAMES = "waypoint_names";
+	public static boolean liveTracking = false;
 
 	public MyDaemonInstallationNodeContribution(InstallationAPIProvider apiProvider,
 												MyDaemonInstallationNodeView view,
@@ -111,6 +114,18 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 		}
 
 		view.setStatusLabel(text);
+	}
+
+	public String getWaypointNames() {
+		return WAYPOINT_NAMES;
+	}
+
+	public void setLiveTracking(boolean value) {
+		liveTracking = value;
+	}
+
+	public boolean isLiveTracking() {
+		return liveTracking;
 	}
 
 	public void onStartClick() {

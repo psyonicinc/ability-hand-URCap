@@ -235,7 +235,9 @@ public class AbilityHandPositionNodeView implements SwingProgramNodeView<Ability
         return sb.append("]").toString();
     }
 
-
+    public JButton getSaveButton() {
+        return savePositionBtn;
+    }
 
     public void setCheckbox(boolean checked) {
 		liveTrackingCheckbox.setSelected(checked);

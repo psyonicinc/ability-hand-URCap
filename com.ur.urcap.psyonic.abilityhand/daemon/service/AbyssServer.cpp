@@ -28,6 +28,8 @@ AbyssServer::AbyssServer(AbilityHandData* data) :
   serviceRegistry.addMethod("setGrip", new setGrip(data));
   serviceRegistry.addMethod("setTorque", new setTorque(data));
   serviceRegistry.addMethod("setDuty", new setDuty(data));
+
+  serviceRegistry.addMethod("moveTillContact", new moveTillContact(data));
 }
 
 AbyssServer::~AbyssServer() {

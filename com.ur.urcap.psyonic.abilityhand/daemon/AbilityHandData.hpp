@@ -24,6 +24,8 @@ class AbilityHandData {
     bool setGrip(uint8_t cmd_grip, uint8_t speed);
     bool setTorque(std::array<float, 6> cmd);
     bool setDuty(std::array<float, 6> cmd);
+    bool moveTillContact(std::array<float, 6> cmd);
+    
   private:
     //std::string title;
     static AHWrapper wrapper;

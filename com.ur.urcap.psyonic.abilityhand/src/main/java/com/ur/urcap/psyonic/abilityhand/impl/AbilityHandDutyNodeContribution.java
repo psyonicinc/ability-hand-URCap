@@ -90,6 +90,7 @@ public class AbilityHandDutyNodeContribution implements ProgramNodeContribution 
         "])"
         );
 
+        writer.appendLine("sleep(0.5)");
         writer.appendLine("ah_daemon.startPositionThread()");
         
     }

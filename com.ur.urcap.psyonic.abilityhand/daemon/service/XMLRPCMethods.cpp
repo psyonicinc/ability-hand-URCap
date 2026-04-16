@@ -180,3 +180,33 @@ void setDuty::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* con
     bool result = data->setDuty(cmd);
     *retvalP = xmlrpc_c::value_boolean(result);
 }
+
+
+moveTillContact::moveTillContact(AbilityHandData* data) : data(data)
+{
+  this->_signature = "b:A"; // RPC method signature, which is not mandatory for basic operation, see http://xmlrpc-c.sourceforge.net/doc/libxmlrpc_server++.html#howto
+  this->_help = "move hand until contact";
+}
+void moveTillContact::execute(xmlrpc_c::paramList const& paramList, xmlrpc_c::value* const retvalP) {
+  
+  paramList.verifyEnd(1);   // exactly one param: the array
+
+    xmlrpc_c::value_array arrVal(paramList.getArray(0));
+    std::vector<xmlrpc_c::value> const elems(arrVal.vectorValueValue());
+
+    if (elems.size() != 6) {
+        throw std::runtime_error("moveTillContact expects an array of 6 doubles");
+    }
+
+    std::array<float, 6> cmd = {
+        static_cast<float>(xmlrpc_c::value_double(elems[0])),
+        static_cast<float>(xmlrpc_c::value_double(elems[1])),
+        static_cast<float>(xmlrpc_c::value_double(elems[2])),
+        static_cast<float>(xmlrpc_c::value_double(elems[3])),
+        static_cast<float>(xmlrpc_c::value_double(elems[4])),
+        static_cast<float>(xmlrpc_c::value_double(elems[5]))
+    };
+
+    bool result = data->moveTillContact(cmd);
+    *retvalP = xmlrpc_c::value_boolean(result);
+}

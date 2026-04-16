@@ -42,7 +42,6 @@ com.ur.urcap.psyonic.abilityhand/daemon/.sconsign.dblite
 
 # built libs
 *.a
-
 # Target folers
 *target/
 

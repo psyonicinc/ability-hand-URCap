@@ -92,3 +92,12 @@ class setDuty: public xmlrpc_c::method {
     setDuty(); // Hereby disabled
     AbilityHandData* data;
 };
+
+class moveTillContact: public xmlrpc_c::method {
+  public:
+    moveTillContact(AbilityHandData* data);
+    void execute(xmlrpc_c::paramList const &paramList, xmlrpc_c::value *const retvalP);
+  private:
+    moveTillContact(); // Hereby disabled
+    AbilityHandData* data;
+};

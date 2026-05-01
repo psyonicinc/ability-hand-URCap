@@ -8,52 +8,160 @@ import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Collections;
 
 public class XmlRpcMyDaemonInterface {
-
+	private static final int PORT = 40405;
+	private static final String HOST_IP = "127.0.0.1";
 	private static final XmlRpcClient client = new XmlRpcClient();
+	private static final XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
 
-	public XmlRpcMyDaemonInterface(String host, int port) {
-		XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-		config.setEnabledForExtensions(true);
+	private final AtomicBoolean isDaemonReachable = new AtomicBoolean(false);
+	private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+	private ScheduledFuture<?> scheduleAtFixedRate;
 
+	public XmlRpcMyDaemonInterface() {
+		setupXmlRpcClient();
+		startMonitorThread();
+	}
+
+	public static String getDaemonUrl() {
+		return "http://" + HOST_IP + ":" + PORT + "/RPC2";
+	}
+
+	private static void setupXmlRpcClient() {
 		try {
-			config.setServerURL(new URL("http://" + host + ":" + port + "/RPC2"));
+			config.setEnabledForExtensions(true);
+			config.setServerURL(new URL(getDaemonUrl()));
+			config.setConnectionTimeout(10000); //10s
+			config.setReplyTimeout(10000); //10s ... used to be 60s
+
+			client.setConfig(config);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
-		config.setConnectionTimeout(10000); //10s
-		config.setReplyTimeout(10000); //10s ... used to be 60s
-
-		client.setConfig(config);
 	}
 
-	public boolean isReachable() {
+	public void startMonitorThread() {
+		Runnable containerMonitorRunnable = new Runnable() {
+			@Override
+			public void run() {
+				isDaemonReachable.set(XmlRpcMyDaemonInterface.this.tryExecuteIsReachable());
+			}
+		};
+
+		stopMonitorThread();
+		scheduleAtFixedRate = executorService.scheduleWithFixedDelay(containerMonitorRunnable, 0, 1, TimeUnit.SECONDS);
+	}
+
+	private boolean tryExecuteIsReachable() {
 		try {
-			client.execute("get_title", new ArrayList<String>());
-			return true;
-		} catch (XmlRpcException e) {
+			return (Boolean) client.execute("isReachable", new ArrayList<String>());
+		} catch (XmlRpcException ignored) {
 			return false;
 		}
 	}
 
-	public String getTitle() throws XmlRpcException, UnknownResponseException {
-		Object result = client.execute("get_title", new ArrayList<String>());
-		return processString(result);
+	public void stopMonitorThread() {
+		if (scheduleAtFixedRate != null) {
+			scheduleAtFixedRate.cancel(true);
+		}
 	}
 
-	public String setTitle(String title) throws XmlRpcException, UnknownResponseException {
-		ArrayList<String> args = new ArrayList<String>();
-		args.add(title);
-		Object result = client.execute("set_title", args);
-		return processString(result);
+	public boolean isDaemonReachable() {
+		return isDaemonReachable.get();
 	}
 
-	public String getMessage(String name) throws XmlRpcException, UnknownResponseException {
-		ArrayList<String> args = new ArrayList<String>();
-		args.add(name);
-		Object result = client.execute("get_message", args);
-		return processString(result);
+	public boolean startPositionThread() {
+		try {
+		return processBoolean(client.execute("startPositionThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean startGripThread() {
+		try {
+		return processBoolean(client.execute("startGripThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean stopPositionThread() {
+		try {
+		return processBoolean(client.execute("stopPositionThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean stopGripThread() {
+		try {
+		return processBoolean(client.execute("stopGripThread", new Object[]{}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean setPosition(List<Double> cmd) {
+		try {
+			cmd.set(5, -cmd.get(5));
+			return processBoolean(client.execute("setPosition", Collections.singletonList(cmd)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public int[] getCurrPosition() {
+		double[] results = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+		int[] res_int = {(int) results[0], (int) results[1], (int) results[2], (int) results[3], (int) results[4], (int) results[5]};
+		return res_int;
+	}
+
+	public boolean setGrip(int grip, int speed) {
+		try {
+			return processBoolean(client.execute("setGrip", new Object[]{grip, speed}));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean setTorque(List<Double> cmd) {
+		try {
+			cmd.set(0, 0.01 * cmd.get(0));
+			cmd.set(1, 0.01 * cmd.get(1));
+			cmd.set(2, 0.01 * cmd.get(2));
+			cmd.set(3, 0.01 * cmd.get(3));
+			cmd.set(4, 0.01 * cmd.get(4));
+			cmd.set(5, 0.01 * cmd.get(5));
+			return processBoolean(client.execute("setTorque", Collections.singletonList(cmd)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public boolean setDuty(List<Double> cmd) {
+		try {
+			
+			return processBoolean(client.execute("setDuty", Collections.singletonList(cmd)));
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	private boolean processBoolean(Object response) throws UnknownResponseException {

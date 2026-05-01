@@ -1,0 +1,53 @@
+import os
+
+release = ARGUMENTS.get('release', 1)
+
+# Base environment
+env = Environment(ENV=os.environ)
+
+# Optional: use UR toolchain if your SDK / machine has it configured.
+# Uncomment and adjust only if your SDK already uses this pattern.
+# env = Environment(tools=['default', 'urtool'], ENV=os.environ)
+
+# Build flags
+if int(release):
+    env.Append(CPPDEFINES=['NDEBUG'])
+    env.Append(CCFLAGS=['-O2'])
+else:
+    env.Append(CCFLAGS=['-g', '-O0'])
+
+# Common warnings / language level
+env.Append(CCFLAGS=[
+    '-Wall',
+    '-Wextra',
+    '-std=c++11',
+])
+
+# Common include and lib paths
+env.Append(CPPPATH=['.', 'service', 'ability_hand/include'])
+env.Append(LIBPATH=['.', 'service'])
+
+# xmlrpc-c libs often needed for UR daemon service code.
+# Exact names can vary a bit by install, so this may need adjustment on your system.
+env.Append(LIBS=[
+    'xmlrpc_server_abyss++',
+    'xmlrpc_server_abyss',
+    'xmlrpc_server++',
+    'xmlrpc_server',
+    'xmlrpc_client++',
+    'xmlrpc_client',
+    'xmlrpc++',
+    'xmlrpc',
+    'pthread',
+    'rt',
+    'm',
+])
+
+# Export configured environment to child SConscript files
+Export('env')
+
+# Build service library first
+SConscript('service/SConscript')
+
+# Build main daemon executable
+SConscript('SConscript')

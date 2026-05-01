@@ -26,7 +26,7 @@ public class MyDaemonDaemonService implements DaemonService {
 	public URL getExecutable() {
 		try {
 			// Two equivalent example daemons are available:
-			return new URL("file:com/ur/urcap/psyonic/abilityhand/impl/daemon/daemon.py"); 
+			return new URL("file:com/ur/urcap/psyonic/abilityhand/impl/daemon/AbilityHandMain"); 
 		} catch (MalformedURLException e) {
 			return null;
 		}

@@ -18,6 +18,9 @@
 *.zip
 *.tar.gz
 *.rar
+*.sconsign.dblite
+com.ur.urcap.psyonic.abilityhand/daemon/.sconsign.dblite
+
 
 # Identifier files
 *.Identifier
@@ -34,6 +37,11 @@
 *ability_hand.log
 *.pyc
 
+# object files
+*.o
+
+# built libs
+*.a
 # Target folers
 *target/
 

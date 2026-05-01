@@ -14,11 +14,20 @@ import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import com.ur.urcap.api.ui.annotation.Input;
+import com.ur.urcap.api.ui.component.InputButton;
+import com.ur.urcap.api.domain.userinteraction.keyboard.KeyboardInputFactory;
+import com.ur.urcap.api.domain.userinteraction.keyboard.KeyboardTextInput;
+import com.ur.urcap.api.domain.userinteraction.keyboard.KeyboardInputCallback;
+;
+
+
 public class AbilityHandPositionNodeContribution implements ProgramNodeContribution {
-    private static final String SERVER_URL_KEY = "server_url";
-    private static final String DEFAULT_SERVER_URL = "http://localhost:40405"; // Assume a default XML-RPC server URL for the hand
     private static final String INDEX_KEY = "index";
     private static final String MIDDLE_KEY = "middle";
     private static final String RING_KEY = "ring";
@@ -26,6 +35,9 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     private static final String THUMB_FLEXOR_KEY = "thumb_flexor";
     private static final String THUMB_OPPOSITION_KEY = "thumb_opposition";
     private static final int DEFAULT_POSITION = 0;
+    private static String WAYPOINT_PRE = "waypoint_";
+    private static String WAYPOINT_SELECTED = "selected_waypoint";
+    private KeyboardInputFactory keyboardFactory;
 
     private final ProgramAPIProvider apiProvider;
     private final AbilityHandPositionNodeView view;
@@ -38,22 +50,9 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         this.apiProvider = apiProvider;
         this.view = view;
         this.model = model;
+        this.keyboardFactory = apiProvider.getUserInterfaceAPI().getUserInteraction().getKeyboardInputFactory();
         
         this.undoRedoManager = this.apiProvider.getProgramAPI().getUndoRedoManager();
-        establishXmlRpcConnection();
-    }
-
-    private void establishXmlRpcConnection() {
-        String serverUrl = getServerUrl();
-        try {
-            XmlRpcClientConfigImpl config = new XmlRpcClientConfigImpl();
-            config.setServerURL(new URL(serverUrl));
-            xmlRpcClient = new XmlRpcClient();
-            xmlRpcClient.setConfig(config);
-        } catch (MalformedURLException e) {
-            // Handle connection error, perhaps log or show in view
-            view.showError("Invalid server URL: " + serverUrl);
-        }
     }
 
     @Override
@@ -65,12 +64,33 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
                 getPosition(PINKY_KEY),
                 getPosition(THUMB_FLEXOR_KEY),
                 getPosition(THUMB_OPPOSITION_KEY)
+
         );
-    }
+        view.setCheckbox(isLiveTracking());
+
+        if (getInstallation().isDaemonEnabled() && isLiveTracking()) {
+            try {
+                getDaemonInterface().stopGripThread();
+                getDaemonInterface().startPositionThread();
+                List<Double> cmd = Arrays.asList(
+                        (double) getPosition(INDEX_KEY),
+                        (double) getPosition(MIDDLE_KEY),
+                        (double) getPosition(RING_KEY),
+                        (double) getPosition(PINKY_KEY),
+                        (double) getPosition(THUMB_FLEXOR_KEY),
+                        (double) getPosition(THUMB_OPPOSITION_KEY)
+                        );
+                getDaemonInterface().setPosition(cmd);
+
+            } catch (Exception e) {
+                view.showError("Failed to start position thread");
+                e.printStackTrace();
+                }
+            }
+        }
 
     @Override
     public void closeView() {
-        // No cleanup needed
     }
 
     @Override
@@ -81,7 +101,6 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
     @Override
     public boolean isDefined() {
     	return true;
-//        return xmlRpcClient != null; // Considered defined if connection is established
     }
 
     @Override
@@ -89,8 +108,20 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
         MyDaemonInstallationNodeContribution install = getInstallation();
         writer.assign("ah_daemon", install.getXMLRPCVariable());
 
-        writer.appendLine("ah_daemon.set_position([\"" + getPosition(INDEX_KEY) + "\",\"" + getPosition(MIDDLE_KEY) + "\", \"" + getPosition(RING_KEY) + "\", \"" + getPosition(PINKY_KEY) + "\",\"" + getPosition(THUMB_FLEXOR_KEY) + "\",\"" + getPosition(THUMB_OPPOSITION_KEY) + "\"])");
+        writer.appendLine("ah_daemon.startPositionThread()");
         
+        writer.appendLine(
+        "ah_daemon.setPosition([" +
+        (double) getPosition(INDEX_KEY) + "," +
+        (double) getPosition(MIDDLE_KEY) + "," +
+        (double) getPosition(RING_KEY) + "," +
+        (double) getPosition(PINKY_KEY) + "," +
+        (double) getPosition(THUMB_FLEXOR_KEY) + "," +
+        (double) getPosition(THUMB_OPPOSITION_KEY) +
+        "])" );
+
+        writer.appendLine("sleep(0.35)");
+
     }
 
     private MyDaemonInstallationNodeContribution getInstallation(){
@@ -109,11 +140,253 @@ public class AbilityHandPositionNodeContribution implements ProgramNodeContribut
 
     }
 
+	public void onCheckboxChanged(final boolean checked) {
+		undoRedoManager.recordChanges(new UndoableChanges() {
+			@Override
+			public void executeChanges() {
+				getInstallation().setLiveTracking(checked);
+			}
+		});
+	}
+
+
+    public void setLiveTracking(boolean value) {
+        getInstallation().setLiveTracking(value);
+
+        if (isLiveTracking()) {
+
+            try {
+                    List<Double> cmd = Arrays.asList(
+                    (double) getPosition(INDEX_KEY),
+                    (double) getPosition(MIDDLE_KEY),
+                    (double) getPosition(RING_KEY),
+                    (double) getPosition(PINKY_KEY),
+                    (double) getPosition(THUMB_FLEXOR_KEY),
+                    (double) getPosition(THUMB_OPPOSITION_KEY)
+                    );
+                    getDaemonInterface().stopGripThread();
+                    getDaemonInterface().startPositionThread();
+                    getDaemonInterface().setPosition(cmd);
+                } catch (Exception e) {
+                    view.showError("Failed to update hand position");
+                    e.printStackTrace();
+                    }
+            }
+            
+    }
+
+    public boolean isLiveTracking() {
+        return getInstallation().isLiveTracking();
+    }
+
+    private XmlRpcMyDaemonInterface getDaemonInterface() {
+    return getInstallation().getXmlRpcDaemonInterface();
+    }
+
     private int getPosition(String key) {
         return model.get(key, DEFAULT_POSITION);
     }
 
-    private String getServerUrl() {
-        return model.get(SERVER_URL_KEY, DEFAULT_SERVER_URL);
+    public void updateHandPosition() {
+
+        if (isLiveTracking()) {
+
+            try {
+                List<Double> cmd = Arrays.asList(
+                (double) getPosition(INDEX_KEY),
+                (double) getPosition(MIDDLE_KEY),
+                (double) getPosition(RING_KEY),
+                (double) getPosition(PINKY_KEY),
+                (double) getPosition(THUMB_FLEXOR_KEY),
+                (double) getPosition(THUMB_OPPOSITION_KEY)
+                );
+                getDaemonInterface().setPosition(cmd);
+            } catch (Exception e) {
+                view.showError("Failed to update hand position");
+                e.printStackTrace();
+            }
+        }
     }
+
+    public int[] getPositions() {
+        
+        int[] positions = {getPosition(INDEX_KEY),
+                            getPosition(MIDDLE_KEY),
+                            getPosition(RING_KEY),
+                            getPosition(PINKY_KEY),
+                            getPosition(THUMB_FLEXOR_KEY),
+                            getPosition(THUMB_OPPOSITION_KEY)
+                            };
+        return positions;
+
+    }
+
+    public void savePositionPoint() {
+        KeyboardTextInput keyboard = keyboardFactory.createStringKeyboardInput();
+        keyboard.setInitialValue(model.get(WAYPOINT_SELECTED, ""));
+
+        keyboard.show(view.getSaveButton(), new KeyboardInputCallback<String>() {
+            @Override
+            public void onOk(String value) {
+                if (value == null || value.trim().isEmpty()) return;
+                final String name = value.trim();
+
+                int[] positions;
+                try {
+                    positions = getPositions();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Daemon Call Failed " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                final int[] finalPositions = positions;
+                undoRedoManager.recordChanges(new UndoableChanges() {
+                    @Override
+                    public void executeChanges() {
+                        saveEntry(name, finalPositions);
+                        model.set(WAYPOINT_SELECTED, name);
+                    }
+                });
+
+                updateView();
+            }
+        });
+    }
+
+    public void onWaypointSelected(String name) {
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            @Override
+            public void executeChanges() {
+                model.set(WAYPOINT_SELECTED, name);
+                
+            }
+        });
+
+        if (view != null) {
+            int[] positions = getWaypointPositions(name);
+            view.setWaypointDisplay(name, positions);
+            updatePosition("index", (int) positions[0]);
+            updatePosition("middle", (int) positions[1]);
+            updatePosition("ring", (int) positions[2]);
+            updatePosition("pinky", (int) positions[3]);
+            updatePosition("thumb_flexor", (int) positions[4]);
+            updatePosition("thumb_opposition", (int) positions[5]);
+            view.updateSliders(getPosition(INDEX_KEY), getPosition(MIDDLE_KEY), getPosition(RING_KEY), getPosition(PINKY_KEY), getPosition(THUMB_FLEXOR_KEY), getPosition(THUMB_OPPOSITION_KEY));
+            
+            if (getDaemonInterface().isDaemonReachable() && isLiveTracking()) {
+                try {
+                    List<Double> cmd = Arrays.asList(
+                        (double) getPosition(INDEX_KEY),
+                        (double) getPosition(MIDDLE_KEY),
+                        (double) getPosition(RING_KEY),
+                        (double) getPosition(PINKY_KEY),
+                        (double) getPosition(THUMB_FLEXOR_KEY),
+                        (double) getPosition(THUMB_OPPOSITION_KEY)
+                        );
+                    getDaemonInterface().setPosition(cmd);
+                } catch (Exception e) {
+                    view.showError("Failed to start waypoint");
+                    e.printStackTrace();
+                }
+                
+            }
+        }
+    }
+
+    private void saveEntry(String name, int[] positions) {
+                List<String> names = getWaypointNames();
+                if (!names.contains(name)) {
+                    names.add(name);
+                    getInstallation().model.set(getInstallation().getWaypointNames(), listToString(names));
+                }
+                getInstallation().model.set(WAYPOINT_PRE + name, arrayToString(positions));
+    }
+
+    private List<String> getWaypointNames() {
+        String raw = getInstallation().model.get(getInstallation().getWaypointNames(), "");
+        List<String> list = new ArrayList<>();
+        if (!raw.isEmpty()) {
+            for (String s : raw.split(",")) {
+                if (!s.trim().isEmpty()) list.add(s.trim());
+            }
+        }
+        return list;
+    }
+
+    private int[] getWaypointPositions(String name) {
+        String raw = getInstallation().model.get(WAYPOINT_PRE + name, "");
+        if (raw.isEmpty()) return new int[6];
+        String[] parts = raw.split(",");
+        int[] positions = new int[parts.length];
+        for (int i=0; i<parts.length; i++) {
+            positions[i] = Integer.parseInt(parts[i].trim());
+        }
+        return positions;
+    }
+
+    public void deleteSelectedWaypoint() {
+        String selected = model.get(WAYPOINT_SELECTED, "");
+        if (selected.isEmpty()) return;
+
+        int result = JOptionPane.showConfirmDialog(null,
+            "Delete \"" + selected + "\"?",
+            "Confirm Delete",
+            JOptionPane.YES_NO_OPTION);
+        if (result != JOptionPane.YES_OPTION) return;
+
+        undoRedoManager.recordChanges(new UndoableChanges() {
+            @Override
+            public void executeChanges() {
+                
+                List<String> names = getWaypointNames();
+                names.remove(selected);
+                getInstallation().model.set(getInstallation().getWaypointNames(), listToString(names));
+
+                
+                getInstallation().model.remove(WAYPOINT_PRE + selected);
+
+                
+                if (names.isEmpty()) {
+                    model.set(WAYPOINT_SELECTED, "");
+                } else {
+                    model.set(WAYPOINT_SELECTED, names.get(0));
+                }
+            }
+        });
+
+        updateView();
+    }
+
+    private void updateView() {
+        if (view==null) return;
+        List<String> names = getWaypointNames();
+        String selected = model.get(WAYPOINT_SELECTED, "");
+        view.setDropdownItems(names, selected);
+        if (!selected.isEmpty()) {
+            int[] positions = getWaypointPositions(selected);
+            view.setWaypointDisplay(selected, positions);
+        }
+        else {
+            int[] placeholder = {-1};
+            view.setWaypointDisplay(" ", placeholder);
+        }
+    }
+
+    private String arrayToString(int[] vals) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < vals.length; i++) {
+            if (i > 0) sb.append(",");
+            sb.append(vals[i]);
+        }
+        return sb.toString();
+    }
+
+    private String listToString(List<String> list) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) sb.append(",");
+            sb.append(list.get(i));
+        }
+        return sb.toString();
+    }
+
 }

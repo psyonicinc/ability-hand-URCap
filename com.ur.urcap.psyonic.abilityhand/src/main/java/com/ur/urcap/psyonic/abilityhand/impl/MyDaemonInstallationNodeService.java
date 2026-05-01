@@ -36,7 +36,7 @@ public class MyDaemonInstallationNodeService implements SwingInstallationNodeSer
 
 	@Override
 	public MyDaemonInstallationNodeContribution createInstallationNode(InstallationAPIProvider apiProvider, MyDaemonInstallationNodeView view, DataModel model, CreationContext context) {
-		return new MyDaemonInstallationNodeContribution(apiProvider, view, model, daemonService, context);
+		return new MyDaemonInstallationNodeContribution(apiProvider, view, model, daemonService, new XmlRpcMyDaemonInterface(), context);
 	}
 
 }

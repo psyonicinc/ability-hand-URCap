@@ -18,23 +18,39 @@ import java.util.TimerTask;
 public class MyDaemonInstallationNodeContribution implements InstallationNodeContribution {
 
 	private static final String ENABLED_KEY = "enabled";
-	public static final int PORT = 40405;
 
-	private DataModel model;
-
+	public DataModel model;
 	private final MyDaemonInstallationNodeView view;
 	private final MyDaemonDaemonService daemonService;
-	private XmlRpcMyDaemonInterface xmlRpcDaemonInterface;
+	private XmlRpcMyDaemonInterface xmlDaemonInterface;
+	// private final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+	// private ScheduledFuture<?> scheduleAtFixedRate;
 	private static String XMLRPC_VARIABLE = "ah_daemon";
 	private Timer uiTimer;
 	private boolean pauseTimer = false;
 
-	public MyDaemonInstallationNodeContribution(InstallationAPIProvider apiProvider, MyDaemonInstallationNodeView view, DataModel model, MyDaemonDaemonService daemonService, CreationContext context) {
+	public static String WAYPOINT_NAMES = "waypoint_names";
+	public static boolean liveTracking = false;
+
+	public MyDaemonInstallationNodeContribution(InstallationAPIProvider apiProvider,
+												MyDaemonInstallationNodeView view,
+												DataModel model, 
+												MyDaemonDaemonService daemonService, 
+												XmlRpcMyDaemonInterface xmlRpcMyDaemonInterface,
+												CreationContext context) {
 		this.view = view;
 		this.daemonService = daemonService;
+		this.xmlDaemonInterface = xmlRpcMyDaemonInterface;
 		this.model = model;
-		xmlRpcDaemonInterface = new XmlRpcMyDaemonInterface("127.0.0.1", PORT);
 		applyDesiredDaemonStatus();
+
+		// if (isDaemonEnabled()) {
+		// 	try {
+		// 	getXmlRpcDaemonInterface().startPositionThread();
+		// 	} catch (Exception e) {
+		// 		e.printStackTrace();
+		// 	}
+		// }
 	}
 
 	@Override
@@ -67,7 +83,10 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	@Override
 	public void generateScript(ScriptWriter writer) {
 		// Assign XMLRPC_VARIABLE
-		writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"http://127.0.0.1:" + PORT + "/RPC2\")");
+		writer.assign(XMLRPC_VARIABLE, "rpc_factory(\"xmlrpc\", \"" + XmlRpcMyDaemonInterface.getDaemonUrl() + "\")");
+		writer.appendLine("ah_daemon.stopGripThread()");
+		writer.appendLine("ah_daemon.stopPositionThread()");
+		writer.appendLine("ah_daemon.startPositionThread()");
 	}
 
 	private void updateUI() {
@@ -97,14 +116,33 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 		view.setStatusLabel(text);
 	}
 
+	public String getWaypointNames() {
+		return WAYPOINT_NAMES;
+	}
+
+	public void setLiveTracking(boolean value) {
+		liveTracking = value;
+	}
+
+	public boolean isLiveTracking() {
+		return liveTracking;
+	}
+
 	public void onStartClick() {
 		model.set(ENABLED_KEY, true);
 		applyDesiredDaemonStatus();
+
 	}
 
 	public void onStopClick() {
 		model.set(ENABLED_KEY, false);
 		applyDesiredDaemonStatus();
+		try {
+		getXmlRpcDaemonInterface().stopPositionThread();
+		getXmlRpcDaemonInterface().stopGripThread();
+		} catch (Exception e) {
+                e.printStackTrace();
+                }
 	}
 
 	private void applyDesiredDaemonStatus() {
@@ -131,7 +169,7 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 	private void awaitDaemonRunning(long timeOutMilliSeconds) throws InterruptedException {
 		daemonService.getDaemon().start();
 		long endTime = System.nanoTime() + timeOutMilliSeconds * 1000L * 1000L;
-		while(System.nanoTime() < endTime && (daemonService.getDaemon().getState() != DaemonContribution.State.RUNNING || !xmlRpcDaemonInterface.isReachable())) {
+		while(System.nanoTime() < endTime && (daemonService.getDaemon().getState() != DaemonContribution.State.RUNNING || !xmlDaemonInterface.isDaemonReachable())) {
 			Thread.sleep(100);
 		}
 	}
@@ -140,15 +178,16 @@ public class MyDaemonInstallationNodeContribution implements InstallationNodeCon
 		return daemonService.getDaemon().getState();
 	}
 
-	private Boolean isDaemonEnabled() {
+	public Boolean isDaemonEnabled() {
 		return model.get(ENABLED_KEY, true); //This daemon is enabled by default
 	}
+
 	
 	public String getXMLRPCVariable(){
 		return XMLRPC_VARIABLE;
 	}
 	
 	public XmlRpcMyDaemonInterface getXmlRpcDaemonInterface() {
-		return xmlRpcDaemonInterface;
+		return xmlDaemonInterface;
 	}
 }

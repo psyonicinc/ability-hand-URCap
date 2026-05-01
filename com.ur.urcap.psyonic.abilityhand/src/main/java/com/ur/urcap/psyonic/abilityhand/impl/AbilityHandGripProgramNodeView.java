@@ -10,6 +10,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JSlider;
+import javax.swing.JCheckBox;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -21,6 +22,8 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 	private JLabel errorLabel;
 
 	private JSlider speedSlider;
+
+	private JCheckBox liveTrackingCheckbox;
 
 	private ContributionProvider<AbilityHandGripProgramNodeContribution> contributionProvider;
 
@@ -44,6 +47,15 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 		panel.add(createSliderBox("SPEED", provider));
 		panel.add(new JLabel("(set SPEED to 0 to stop grip)"), Component.LEFT_ALIGNMENT);
 
+		liveTrackingCheckbox = new JCheckBox("Live Position Tracking");
+        liveTrackingCheckbox.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        panel.add(liveTrackingCheckbox);
+
+        liveTrackingCheckbox.addActionListener(e -> {
+		provider.get().onCheckboxChanged(liveTrackingCheckbox.isSelected());
+        provider.get().setLiveTracking(liveTrackingCheckbox.isSelected());
+        });
 
 		errorLabel = new JLabel();
 		errorLabel.setForeground(java.awt.Color.RED);
@@ -143,6 +155,7 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 	}
 
 
+
 	private Component createHorizontalSpacing() {
 		return Box.createRigidArea(new Dimension(style.getHorizontalSpacing(), 0));
 	}
@@ -158,6 +171,10 @@ public class AbilityHandGripProgramNodeView implements SwingProgramNodeView<Abil
 	public void showError(String message) {
         errorLabel.setText(message);
     }
+
+	public void setCheckbox(boolean checked) {
+		liveTrackingCheckbox.setSelected(checked);
+	}
 
 
 	
